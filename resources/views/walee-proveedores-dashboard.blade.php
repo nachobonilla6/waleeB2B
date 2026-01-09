@@ -168,30 +168,17 @@
             ->limit(5)
             ->get();
         
-        // Todos los suppliers activos
+        // Todos los suppliers activos de la tabla suppliers
         $todosLosSuppliers = Client::where('is_active', true)
             ->orderBy('name', 'asc')
             ->get();
         
         // Formatear para mantener compatibilidad con el HTML existente
-        $clientesConPublicaciones = $todosLosSuppliers->map(function($client) {
-            // Obtener publicaciones del supplier si tiene relación con Cliente
-            $totalPublicaciones = 0;
-            $programadas = 0;
-            
-            if ($client->email) {
-                $clientePlaneador = Cliente::where('correo', $client->email)->first();
-                if ($clientePlaneador) {
-                    $publicaciones = PublicidadEvento::where('cliente_id', $clientePlaneador->id)->get();
-                    $totalPublicaciones = $publicaciones->count();
-                    $programadas = $publicaciones->where('estado', 'programado')->count();
-                }
-            }
-            
+        $clientesConPublicaciones = $todosLosSuppliers->map(function($supplier) {
             return [
-                'client' => $client,
-                'total_publicaciones' => $totalPublicaciones,
-                'programadas' => $programadas,
+                'client' => $supplier,
+                'total_publicaciones' => 0,
+                'programadas' => 0,
             ];
         })->toArray();
         
@@ -695,16 +682,6 @@
                                     </div>
                                 </a>
                                 <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-                                    @if($item['total_publicaciones'] > 0)
-                                        <div class="text-right mr-2">
-                                            <p class="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
-                                                <span class="text-violet-600 dark:text-violet-400">{{ $item['programadas'] }}</span>
-                                                <span class="text-slate-500 dark:text-slate-400">/</span>
-                                                <span class="text-slate-700 dark:text-slate-300">{{ $item['total_publicaciones'] }}</span>
-                                            </p>
-                                            <p class="text-xs text-slate-500 dark:text-slate-500">Programadas / Total</p>
-                                        </div>
-                                    @endif
                                     @if($telefonoLimpio)
                                         <button onclick="sendWhatsAppLink('{{ $telefonoLimpio }}', '{{ $item['client']->name }}')" 
                                                 class="flex items-center justify-center p-2 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 hover:bg-emerald-200 dark:hover:bg-emerald-500/30 text-emerald-600 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/30 transition-all group shadow-sm hover:shadow-md"

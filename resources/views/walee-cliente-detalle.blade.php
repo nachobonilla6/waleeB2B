@@ -883,8 +883,8 @@
                         <div class="px-3 pb-3">
                             <div class="grid grid-cols-4 gap-1.5">
                                 <!-- Note Button -->
-                                <button onclick="openNotaModal()" class="flex items-center justify-center p-2 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-amber-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm" title="Note">
-                                    <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-amber-600 dark:text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <button onclick="openNotaModal()" class="flex items-center justify-center p-2 rounded-lg bg-violet-100 dark:bg-violet-500/20 hover:bg-violet-200 dark:hover:bg-violet-500/30 text-violet-600 dark:text-violet-400 border border-violet-600 dark:border-violet-500/30 transition-all group shadow-sm" title="Note">
+                                    <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                     </svg>
                                 </button>
@@ -1119,7 +1119,7 @@
                             <!-- Acciones Rápidas Desktop -->
                             <div class="flex flex-wrap gap-2.5">
                                 <!-- Note Button -->
-                                <button onclick="openNotaModal()" class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-500/10 dark:to-amber-600/5 hover:from-amber-100 hover:to-amber-200/50 dark:hover:from-amber-500/20 dark:hover:to-amber-600/10 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-500/20 hover:border-amber-300 dark:hover:border-amber-500/30 transition-all group shadow-sm hover:shadow-md active:scale-[0.98]" title="Note">
+                                <button onclick="openNotaModal()" class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 hover:from-violet-100 hover:to-violet-200/50 dark:hover:from-violet-500/20 dark:hover:to-violet-600/10 text-violet-700 dark:text-violet-400 border border-violet-200/50 dark:border-violet-500/20 hover:border-violet-300 dark:hover:border-violet-500/30 transition-all group shadow-sm hover:shadow-md active:scale-[0.98]" title="Note">
                                     <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                     </svg>
@@ -3452,7 +3452,7 @@
                             name="nota" 
                             rows="10" 
                             placeholder="Write your note here..." 
-                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all resize-none"
+                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"
                             style="min-width: 100%; width: 100%; max-width: 100%;"
                         >${notaActual}</textarea>
                     </div>
@@ -3476,7 +3476,7 @@
                 customClass: {
                     popup: isMobile ? '!w-[95%] !max-w-[95%]' : '',
                     htmlContainer: isMobile ? '!w-full !max-w-full' : '',
-                    confirmButton: '!bg-amber-500 hover:!bg-amber-600'
+                    confirmButton: '!bg-violet-500 hover:!bg-violet-600'
                 },
                 didOpen: () => {
                     // Asegurar que el textarea use todo el ancho

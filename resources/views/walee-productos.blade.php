@@ -196,6 +196,7 @@
         <div class="relative max-w-[90rem] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
             @php $pageTitle = 'Productos'; @endphp
             @include('partials.walee-navbar')
+            @include('partials.walee-back-button')
             
             <!-- Header -->
             <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6 md:mb-8 animate-fade-in-up">

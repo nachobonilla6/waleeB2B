@@ -719,6 +719,7 @@
             
         <!-- Contenido principal -->
         <div class="relative max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 pb-6 flex flex-col">
+            @include('partials.walee-back-button')
             <!-- Botón del extractor fuera de la sección, esquina superior derecha (desactivado) -->
             <div class="absolute top-0 right-4 sm:right-6 z-30">
                 <span class="inline-flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg bg-gray-400/80 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg cursor-not-allowed opacity-60" title="Extractor desactivado">

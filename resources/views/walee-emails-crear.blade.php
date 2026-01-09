@@ -120,6 +120,7 @@
         <div class="relative max-w-[90rem] mx-auto px-2.5 py-2.5 sm:px-4 sm:py-6 lg:px-8">
             @php $pageTitle = 'Crear Email con AI'; @endphp
             @include('partials.walee-navbar')
+            @include('partials.walee-back-button')
             
             <!-- Notifications -->
             <div id="notifications" class="fixed top-2 right-2 sm:top-4 sm:right-4 z-50 space-y-2"></div>

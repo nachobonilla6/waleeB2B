@@ -248,6 +248,7 @@
         <div class="relative max-w-[90rem] mx-auto px-4 py-4 sm:px-6 lg:px-8">
             @php $pageTitle = isset($factura) && $factura ? 'Editar Factura' : 'Crear Factura'; @endphp
             @include('partials.walee-navbar')
+            @include('partials.walee-back-button')
             
             <!-- Header -->
             <header class="mb-4 sm:mb-6 animate-fade-in-up">

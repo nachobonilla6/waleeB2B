@@ -214,6 +214,7 @@
         <div class="relative max-w-[90rem] mx-auto px-4 py-4 sm:px-6 lg:px-8">
             @php $pageTitle = 'Crear Cotización'; @endphp
             @include('partials.walee-navbar')
+            @include('partials.walee-back-button')
             
             <!-- Notifications -->
             <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2"></div>

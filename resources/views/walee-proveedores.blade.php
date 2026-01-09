@@ -120,6 +120,7 @@
         <div class="relative max-w-[90rem] mx-auto px-2.5 py-2.5 sm:px-4 sm:py-6 lg:px-8">
             @php $pageTitle = 'Clientes'; @endphp
             @include('partials.walee-navbar')
+            @include('partials.walee-back-button')
             
             <!-- Options Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">

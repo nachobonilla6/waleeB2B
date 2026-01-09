@@ -6954,6 +6954,9 @@ Route::post('/walee-supplier/{id}/public/add-product', function (\Illuminate\Htt
             'precio' => 'required|numeric|min:0',
             'stock' => 'nullable|integer|min:0',
             'fecha_expiracion' => 'nullable|date',
+            'fecha_entrada' => 'nullable|date',
+            'dlc' => 'nullable|date',
+            'fecha_limite_venta' => 'nullable|date',
             'imagen' => 'nullable|image|max:5120', // 5MB max
         ]);
         

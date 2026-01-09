@@ -3468,7 +3468,7 @@
                 showCloseButton: true,
                 confirmButtonText: 'Save',
                 cancelButtonText: 'Cancel',
-                confirmButtonColor: '#f59e0b',
+                confirmButtonColor: '#8b5cf6',
                 cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
                 reverseButtons: true,
                 background: isDarkMode ? '#1e293b' : '#ffffff',
@@ -3522,7 +3522,7 @@
                         icon: 'success',
                         title: '¡Nota guardada!',
                         text: 'La nota se ha guardado correctamente',
-                        confirmButtonColor: '#f59e0b',
+                        confirmButtonColor: '#8b5cf6',
                         background: isDarkMode ? '#1e293b' : '#ffffff',
                         timer: 2000,
                         showConfirmButton: false

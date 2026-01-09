@@ -254,23 +254,23 @@
                     
                     <!-- Statistics Buttons -->
                     <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-4">
-                        <button class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all shadow-sm">
+                        <button onclick="openSubscribeModal()" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-yellow-100 dark:bg-yellow-500/20 hover:bg-yellow-200 dark:hover:bg-yellow-500/30 text-yellow-700 dark:text-yellow-400 border border-yellow-300 dark:border-yellow-500/30 transition-all shadow-sm cursor-pointer">
                             <span class="text-xs font-medium">Appointments</span>
                             <span class="text-sm font-bold">{{ $appointmentsCount }}</span>
                         </button>
-                        <button class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all shadow-sm">
+                        <button onclick="openSubscribeModal()" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-red-100 dark:bg-red-500/20 hover:bg-red-200 dark:hover:bg-red-500/30 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-500/30 transition-all shadow-sm cursor-pointer">
                             <span class="text-xs font-medium">Invoices</span>
                             <span class="text-sm font-bold">{{ $invoicesCount }}</span>
                         </button>
-                        <button class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all shadow-sm">
+                        <button onclick="openSubscribeModal()" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-orange-100 dark:bg-orange-500/20 hover:bg-orange-200 dark:hover:bg-orange-500/30 text-orange-700 dark:text-orange-400 border border-orange-300 dark:border-orange-500/30 transition-all shadow-sm cursor-pointer">
                             <span class="text-xs font-medium">Contracts</span>
                             <span class="text-sm font-bold">{{ $contractsCount }}</span>
                         </button>
-                        <button onclick="openListOfProductsModal()" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all shadow-sm cursor-pointer">
+                        <button onclick="openListOfProductsModal()" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-violet-100 dark:bg-violet-500/20 hover:bg-violet-200 dark:hover:bg-violet-500/30 text-violet-700 dark:text-violet-400 border border-violet-300 dark:border-violet-500/30 transition-all shadow-sm cursor-pointer">
                             <span class="text-xs font-medium">Products</span>
                             <span class="text-sm font-bold">{{ $productsCount }}</span>
                         </button>
-                        <button class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all shadow-sm">
+                        <button onclick="openSubscribeModal()" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 hover:bg-emerald-200 dark:hover:bg-emerald-500/30 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/30 transition-all shadow-sm cursor-pointer">
                             <span class="text-xs font-medium">Emails Enviados</span>
                             <span class="text-sm font-bold">{{ $emailsSentCount }}</span>
                         </button>
@@ -281,9 +281,6 @@
                         <div class="flex items-center justify-between mb-3">
                             <h2 class="text-xl font-bold text-slate-900 dark:text-white">Edit Profile</h2>
                             <div class="flex items-center gap-2">
-                                <button onclick="openListOfProductsModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-lg font-medium transition-colors">
-                                    List of Products
-                                </button>
                                 <button onclick="openAddProductModal()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium transition-colors">
                                     Add Product
                                 </button>

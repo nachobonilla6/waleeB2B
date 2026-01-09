@@ -7,6 +7,8 @@
     <title>Walee B2B - Suppliers Dashboard and Logistics</title>
     <meta name="description" content="Walee B2B - Suppliers Dashboard and Logistics">
     <meta name="theme-color" content="#D59F3B">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     @include('partials.walee-dark-mode-init')
     @include('partials.walee-violet-light-mode')

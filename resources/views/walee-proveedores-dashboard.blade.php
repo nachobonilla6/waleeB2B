@@ -621,6 +621,11 @@
                 </div>
             </div>
             
+            <!-- Suppliers List Title -->
+            <div class="mb-3 sm:mb-4 md:mb-5">
+                <h2 class="text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-white">Suppliers List</h2>
+            </div>
+            
             <!-- Categoria -->
             <div class="mb-4 sm:mb-6 md:mb-8">
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.7s">

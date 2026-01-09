@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Walee - {{ $cliente->name }}</title>
-    <meta name="description" content="Detalle del cliente">
+    <meta name="description" content="Supplier details">
     <meta name="theme-color" content="#D59F3B">
     @include('partials.walee-dark-mode-init')
     @include('partials.walee-violet-light-mode')
@@ -778,12 +778,12 @@
                                 <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white break-words mb-2">{{ $cliente->name }}</h1>
                                 <div class="flex flex-col">
                                     <div class="flex items-center gap-2 mb-1.5">
-                                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Estado:</span>
+                                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Status:</span>
                                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit">
                                             <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
-                                            {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
+                                            {{ $cliente->estado === 'accepted' ? 'Active' : ucfirst($cliente->estado) }}
                                         </span>
-                                        <button onclick="openNotaModal()" class="ml-auto flex items-center justify-center p-1.5 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-amber-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm" title="Nota">
+                                        <button onclick="openNotaModal()" class="ml-auto flex items-center justify-center p-1.5 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-amber-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm" title="Note">
                                             <svg class="w-4 h-4 flex-shrink-0 group-hover:scale-110 transition-transform text-amber-600 dark:text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                             </svg>
@@ -796,12 +796,12 @@
                                 <button 
                                     onclick="toggleIsActive({{ $cliente->id }}, {{ ($cliente->is_active ?? false) ? 'true' : 'false' }})"
                                     class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 {{ (($cliente->is_active ?? false)) ? 'bg-emerald-500 focus:ring-emerald-500' : 'bg-slate-300 dark:bg-slate-600 focus:ring-slate-500' }}"
-                                    title="{{ (($cliente->is_active ?? false)) ? 'Activo' : 'Inactivo' }}"
+                                    title="{{ (($cliente->is_active ?? false)) ? 'Active' : 'Inactive' }}"
                                 >
                                     <span class="inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform {{ (($cliente->is_active ?? false)) ? 'translate-x-5' : 'translate-x-0.5' }}"></span>
                                 </button>
-                                <span class="text-xs font-medium {{ (($cliente->is_active ?? false)) ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400' }}">
-                                    {{ (($cliente->is_active ?? false)) ? 'Sí' : 'No' }}
+                                    <span class="text-xs font-medium {{ (($cliente->is_active ?? false)) ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400' }}">
+                                    {{ (($cliente->is_active ?? false)) ? 'Yes' : 'No' }}
                                 </span>
                             </div>
                             
@@ -852,7 +852,7 @@
                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    <span>Horario</span>
+                                    <span>Schedule</span>
                                     <span id="horarioEstado" class="ml-1"></span>
                                 </button>
                             @endif
@@ -879,7 +879,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                     </svg>
                                     <div class="flex-1 min-w-0">
-                                        <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Contacto de la empresa:</span>
+                                        <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Company Contact:</span>
                                         <p class="text-sm font-semibold text-slate-900 dark:text-white truncate">{{ $cliente->contacto_empresa }}</p>
                                     </div>
                                 </div>
@@ -946,29 +946,29 @@
                             @endphp
                             
                             
-                            <!-- Citas -->
+                            <!-- Appointments -->
                             <a href="{{ route('walee.calendario', ['cliente_id' => $cliente->id]) }}" class="flex items-center justify-between p-2.5 rounded-lg bg-amber-100 dark:bg-walee-500/10 border border-amber-600 dark:border-walee-500/20 hover:bg-amber-200 dark:hover:bg-walee-500/20 transition-colors cursor-pointer">
                                 <div class="flex items-center gap-2">
                                     <svg class="w-4 h-4 text-amber-600 dark:text-walee-400" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5v-5z"/>
                             </svg>
-                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Citas</span>
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Appointments</span>
                         </div>
                                 <span class="text-sm font-semibold text-amber-700 dark:text-walee-400">{{ $totalCitas }}</span>
                             </a>
                             
-                            <!-- Facturas -->
+                            <!-- Invoices -->
                             <a href="{{ route('walee.facturas.crear') }}?cliente_id={{ $cliente->id }}" class="flex items-center justify-between p-2.5 rounded-lg bg-red-100 dark:bg-red-500/10 border border-red-600 dark:border-red-500/20 hover:bg-red-200 dark:hover:bg-red-500/20 transition-colors cursor-pointer">
                                 <div class="flex items-center gap-2">
                                     <svg class="w-4 h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
-                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Facturas</span>
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Invoices</span>
                             </div>
                                 <span class="text-sm font-semibold text-red-700 dark:text-red-400">{{ $facturas->count() }}</span>
                             </a>
                 
-                            <!-- Cotizaciones -->
+                            <!-- Quotes -->
                             <a href="{{ route('walee.cotizaciones.crear') }}?cliente_id={{ $cliente->id }}" class="flex items-center justify-between p-2.5 rounded-lg bg-blue-100 dark:bg-blue-500/10 border border-blue-600 dark:border-blue-500/20 hover:bg-blue-200 dark:hover:bg-blue-500/20 transition-colors cursor-pointer">
                                 <div class="flex items-center gap-2">
                                     <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1031,16 +1031,16 @@
                                     <h1 class="text-2xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2 sm:mb-3 truncate">{{ $cliente->name }}</h1>
                                     <div class="flex flex-col">
                                         <div class="flex items-center gap-2 mb-2">
-                                            <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Estado:</span>
+                                            <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Status:</span>
                                             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit">
                                                 <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
-                                                {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
+                                                {{ $cliente->estado === 'accepted' ? 'Active' : ucfirst($cliente->estado) }}
                                             </span>
-                                            <button onclick="openNotaModal()" class="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-500/10 dark:to-amber-600/5 hover:from-amber-100 hover:to-amber-200/50 dark:hover:from-amber-500/20 dark:hover:to-amber-600/10 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-500/20 hover:border-amber-300 dark:hover:border-amber-500/30 transition-all group shadow-sm hover:shadow-md active:scale-[0.98]" title="Nota">
+                                            <button onclick="openNotaModal()" class="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-500/10 dark:to-amber-600/5 hover:from-amber-100 hover:to-amber-200/50 dark:hover:from-amber-500/20 dark:hover:to-amber-600/10 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-500/20 hover:border-amber-300 dark:hover:border-amber-500/30 transition-all group shadow-sm hover:shadow-md active:scale-[0.98]" title="Note">
                                                 <svg class="w-4 h-4 flex-shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                                 </svg>
-                                                <span class="text-xs font-semibold">Nota</span>
+                                                <span class="text-xs font-semibold">Note</span>
                                             </button>
                                         </div>
                                     
@@ -1050,7 +1050,7 @@
                                         <button 
                                             onclick="toggleIsActive({{ $cliente->id }}, {{ ($cliente->is_active ?? false) ? 'true' : 'false' }})"
                                             class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 {{ (($cliente->is_active ?? false)) ? 'bg-emerald-500 focus:ring-emerald-500' : 'bg-slate-300 dark:bg-slate-600 focus:ring-slate-500' }}"
-                                            title="{{ (($cliente->is_active ?? false)) ? 'Activo' : 'Inactivo' }}"
+                                            title="{{ (($cliente->is_active ?? false)) ? 'Active' : 'Inactive' }}"
                                         >
                                             <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform {{ (($cliente->is_active ?? false)) ? 'translate-x-6' : 'translate-x-1' }}"></span>
                                         </button>
@@ -1106,7 +1106,7 @@
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    <span>Horario</span>
+                                    <span>Schedule</span>
                                     <span id="horarioEstadoDesktop" class="ml-1"></span>
                                 </button>
                             @endif
@@ -1133,7 +1133,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                         </svg>
                                         <div class="flex-1 min-w-0">
-                                            <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Contacto de la empresa:</span>
+                                            <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Company Contact:</span>
                                             <p class="text-sm font-semibold text-slate-900 dark:text-white truncate">{{ $cliente->contacto_empresa }}</p>
                                         </div>
                                     </div>
@@ -1203,35 +1203,35 @@
                                 @endphp
                                 
                                 
-                                <!-- Citas -->
+                                <!-- Appointments -->
                                 <a href="{{ route('walee.calendario', ['cliente_id' => $cliente->id]) }}" class="flex items-center justify-between p-3 rounded-xl bg-walee-500/10 border border-walee-500/20 hover:bg-walee-500/20 transition-colors cursor-pointer">
                                     <div class="flex items-center gap-2">
                                         <svg class="w-4 h-4 text-amber-600 dark:text-walee-400" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5v-5z"/>
                                                 </svg>
-                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Citas</span>
+                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Appointments</span>
                                             </div>
                                     <span class="text-sm font-semibold text-amber-700 dark:text-walee-400">{{ $totalCitas }}</span>
                     </a>
                     
-                                <!-- Facturas -->
+                                <!-- Invoices -->
                                 <a href="{{ route('walee.facturas.crear') }}?cliente_id={{ $cliente->id }}" class="flex items-center justify-between p-3 rounded-xl bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-colors cursor-pointer">
                                     <div class="flex items-center gap-2">
                                         <svg class="w-4 h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
-                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Facturas</span>
+                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Invoices</span>
                             </div>
                                     <span class="text-sm font-semibold text-red-700 dark:text-red-400">{{ $facturas->count() }}</span>
                     </a>
                     
-                                <!-- Cotizaciones -->
+                                <!-- Quotes -->
                                 <a href="{{ route('walee.cotizaciones.crear') }}?cliente_id={{ $cliente->id }}" class="block w-full flex items-center justify-between p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-colors cursor-pointer">
                                     <div class="flex items-center gap-2">
                                         <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                                 </svg>
-                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Cotizaciones</span>
+                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Quotes</span>
                                             </div>
                                     <span class="text-sm font-semibold text-blue-700 dark:text-blue-400">{{ $cotizaciones->count() }}</span>
                     </a>
@@ -2172,8 +2172,8 @@
                     cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
                 },
                 showCancelButton: true,
-                confirmButtonText: 'Guardar',
-                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Save',
+                cancelButtonText: 'Cancel',
                 confirmButtonColor: '#D59F3B',
                 reverseButtons: true,
                 didOpen: () => {
@@ -3402,8 +3402,8 @@
                 padding: isMobile ? '0.75rem' : '1.5rem',
                 showCancelButton: true,
                 showCloseButton: true,
-                confirmButtonText: 'Guardar',
-                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Save',
+                cancelButtonText: 'Cancel',
                 confirmButtonColor: '#8b5cf6',
                 cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
                 reverseButtons: true,
@@ -3443,20 +3443,20 @@
                     .then(response => response.json())
                     .then(data => {
                         if (!data.success) {
-                            throw new Error(data.message || 'Error al guardar');
+                            throw new Error(data.message || 'Error saving');
                         }
                         return data;
                     })
                     .catch(error => {
-                        Swal.showValidationMessage(error.message || 'Error al guardar la configuración');
+                        Swal.showValidationMessage(error.message || 'Error saving configuration');
                     });
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
                         icon: 'success',
-                        title: '¡Configuración guardada!',
-                        text: 'Los cambios se han guardado correctamente',
+                        title: 'Configuration saved!',
+                        text: 'Changes have been saved successfully',
                         confirmButtonColor: '#8b5cf6',
                         background: isDarkMode ? '#1e293b' : '#ffffff',
                         timer: 2000,
@@ -3484,7 +3484,7 @@
                             id="nota_content" 
                             name="nota" 
                             rows="10" 
-                            placeholder="Escribe tu nota aquí..." 
+                            placeholder="Write your note here..." 
                             class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all resize-none"
                             style="min-width: 100%; width: 100%; max-width: 100%;"
                         >${notaActual}</textarea>
@@ -3493,14 +3493,14 @@
             `;
             
             Swal.fire({
-                title: 'Nota',
+                title: 'Note',
                 html: html,
                 width: isMobile ? '95%' : '700px',
                 padding: isMobile ? '0.75rem' : '1.5rem',
                 showCancelButton: true,
                 showCloseButton: true,
-                confirmButtonText: 'Guardar',
-                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Save',
+                cancelButtonText: 'Cancel',
                 confirmButtonColor: '#f59e0b',
                 cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
                 reverseButtons: true,
@@ -3541,12 +3541,12 @@
                     .then(response => response.json())
                     .then(data => {
                         if (!data.success) {
-                            throw new Error(data.message || 'Error al guardar');
+                            throw new Error(data.message || 'Error saving');
                         }
                         return data;
                     })
                     .catch(error => {
-                        Swal.showValidationMessage(error.message || 'Error al guardar la nota');
+                        Swal.showValidationMessage(error.message || 'Error saving the note');
                     });
                 }
             }).then((result) => {

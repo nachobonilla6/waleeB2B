@@ -253,7 +253,7 @@
                     </div>
                     
                     <!-- Statistics Buttons -->
-                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-4">
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-4">
                         <button class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all shadow-sm">
                             <span class="text-xs font-medium">Appointments</span>
                             <span class="text-sm font-bold">{{ $appointmentsCount }}</span>
@@ -263,14 +263,10 @@
                             <span class="text-sm font-bold">{{ $invoicesCount }}</span>
                         </button>
                         <button class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all shadow-sm">
-                            <span class="text-xs font-medium">Quotes</span>
-                            <span class="text-sm font-bold">{{ $quotesCount }}</span>
-                        </button>
-                        <button class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all shadow-sm">
                             <span class="text-xs font-medium">Contracts</span>
                             <span class="text-sm font-bold">{{ $contractsCount }}</span>
                         </button>
-                        <button class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all shadow-sm">
+                        <button onclick="openListOfProductsModal()" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all shadow-sm cursor-pointer">
                             <span class="text-xs font-medium">Products</span>
                             <span class="text-sm font-bold">{{ $productsCount }}</span>
                         </button>

@@ -475,31 +475,34 @@
             
             Swal.fire({
                 title: 'Edit Profile',
+                width: '700px',
                 html: `
-                    <form id="editProfileForm" class="space-y-4 text-left">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Name *</label>
-                            <input type="text" id="profileName" name="name" required value="${supplier.name}" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email</label>
-                            <input type="email" id="profileEmail" name="email" value="${supplier.email}" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Phone 1</label>
-                            <input type="tel" id="profileTelefono1" name="telefono_1" value="${supplier.telefono_1}" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Phone 2</label>
-                            <input type="tel" id="profileTelefono2" name="telefono_2" value="${supplier.telefono_2}" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Address</label>
-                            <input type="text" id="profileAddress" name="address" value="${supplier.address}" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Company Contact</label>
-                            <input type="text" id="profileContactoEmpresa" name="contacto_empresa" value="${supplier.contacto_empresa}" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
+                    <form id="editProfileForm" class="text-left">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Name *</label>
+                                <input type="text" id="profileName" name="name" required value="${supplier.name}" class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Email</label>
+                                <input type="email" id="profileEmail" name="email" value="${supplier.email}" class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Phone 1</label>
+                                <input type="tel" id="profileTelefono1" name="telefono_1" value="${supplier.telefono_1}" class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Phone 2</label>
+                                <input type="tel" id="profileTelefono2" name="telefono_2" value="${supplier.telefono_2}" class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Address</label>
+                                <input type="text" id="profileAddress" name="address" value="${supplier.address}" class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Company Contact</label>
+                                <input type="text" id="profileContactoEmpresa" name="contacto_empresa" value="${supplier.contacto_empresa}" class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
+                            </div>
                         </div>
                     </form>
                 `,
@@ -507,6 +510,7 @@
                 confirmButtonText: 'Save',
                 cancelButtonText: 'Cancel',
                 confirmButtonColor: '#D59F3B',
+                padding: '1rem',
                 customClass: {
                     popup: isDarkMode ? 'dark-swal' : 'light-swal',
                     htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html'
@@ -517,6 +521,9 @@
                         popup.style.backgroundColor = '#0f172a';
                         popup.style.color = '#e2e8f0';
                     }
+                    // Asegurar que el modal no sea muy alto
+                    popup.style.maxHeight = '500px';
+                    popup.style.overflowY = 'auto';
                 },
                 preConfirm: () => {
                     const name = document.getElementById('profileName').value;

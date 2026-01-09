@@ -125,7 +125,8 @@
         }
         
         $productsCount = $productos->count();
-        $emailsSentCount = \App\Models\EmailTemplate::where('cliente_id', $supplier->id)->count();
+        // EmailTemplate no tiene cliente_id, usar PropuestaPersonalizada que sí tiene relación con clientes
+        $emailsSentCount = \App\Models\PropuestaPersonalizada::where('cliente_id', $supplier->id)->count();
     @endphp
 
     <div class="min-h-screen relative flex flex-col">

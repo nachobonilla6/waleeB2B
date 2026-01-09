@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,6 +22,30 @@
                 }
             }
         }
+        
+        // Detectar y aplicar modo dark/light
+        (function() {
+            // Cargar preferencia guardada o usar la del sistema
+            const darkMode = localStorage.getItem('darkMode') === 'true' || 
+                (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            
+            if (darkMode) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            
+            // Escuchar cambios en la preferencia del sistema
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                if (!localStorage.getItem('darkMode')) {
+                    if (e.matches) {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                }
+            });
+        })();
     </script>
     <style>
         [x-cloak] { display: none !important; }
@@ -35,6 +59,16 @@
     </div>
 
     <div class="relative min-h-screen flex flex-col items-center justify-center px-4 py-12">
+        <!-- Dark Mode Toggle Button -->
+        <button onclick="toggleDarkMode()" class="fixed top-4 right-4 z-50 p-3 rounded-full bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 transition-colors shadow-lg" title="Toggle dark mode">
+            <svg id="darkModeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+            <svg id="lightModeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+        </button>
+        
         <div class="w-full max-w-4xl">
             <!-- Header -->
             <div class="text-center mb-12">
@@ -259,6 +293,43 @@
             </div>
         </div>
     </div>
+    
+    <script>
+        // Función para cambiar entre modo dark y light
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.contains('dark');
+            
+            if (isDark) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('darkMode', 'false');
+                updateDarkModeIcons(false);
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('darkMode', 'true');
+                updateDarkModeIcons(true);
+            }
+        }
+        
+        // Actualizar iconos según el modo actual
+        function updateDarkModeIcons(isDark) {
+            const darkIcon = document.getElementById('darkModeIcon');
+            const lightIcon = document.getElementById('lightModeIcon');
+            
+            if (isDark) {
+                darkIcon.style.display = 'block';
+                lightIcon.style.display = 'none';
+            } else {
+                darkIcon.style.display = 'none';
+                lightIcon.style.display = 'block';
+            }
+        }
+        
+        // Inicializar iconos al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            const isDark = document.documentElement.classList.contains('dark');
+            updateDarkModeIcons(isDark);
+        });
+    </script>
 </body>
 </html>
 

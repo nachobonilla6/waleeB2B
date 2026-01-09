@@ -830,6 +830,13 @@
                             </span>
                         </div>
                         
+                        @if($cliente->contacto_empresa)
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">Company Contact:</span>
+                                <span class="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">{{ $cliente->contacto_empresa }}</span>
+                            </div>
+                        @endif
+                        
                         @if($cliente->horario)
                             <button onclick="showHorarioModal('{{ addslashes($cliente->horario) }}', '{{ $clientTimezone ?? '' }}', '{{ $systemTimezone }}')" id="horarioBtn" class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs transition-colors border border-slate-200 dark:border-slate-700">
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -850,21 +857,6 @@
                             </div>
                         @endif
                     </div>
-                    
-                    <!-- Company Contact -->
-                    @if($cliente->contacto_empresa)
-                        <div class="mb-4">
-                            <div class="flex items-center gap-2.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-                                <svg class="w-5 h-5 text-slate-500 dark:text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                </svg>
-                                <div class="flex-1 min-w-0">
-                                    <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Company Contact:</span>
-                                    <p class="text-sm font-semibold text-slate-900 dark:text-white truncate">{{ $cliente->contacto_empresa }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
                     
                     <!-- Quick Actions -->
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">

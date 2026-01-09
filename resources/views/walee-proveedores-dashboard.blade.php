@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Walee B2B - Suppliers Dashboard</title>
-    <meta name="description" content="Walee B2B - Suppliers Dashboard">
+    <title>Walee B2B - Suppliers Dashboard and Logistics</title>
+    <meta name="description" content="Walee B2B - Suppliers Dashboard and Logistics">
     <meta name="theme-color" content="#D59F3B">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     @include('partials.walee-dark-mode-init')
@@ -304,7 +304,7 @@
         <!-- Fixed Navbar -->
         <div class="fixed top-0 left-0 right-0 z-50 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-700/50">
             <div class="max-w-[90rem] mx-auto px-3 py-4 sm:px-4 lg:px-8">
-                @php $pageTitle = 'Suppliers Dashboard'; @endphp
+                @php $pageTitle = 'Suppliers Dashboard and Logistics'; @endphp
                 @include('partials.walee-navbar')
             </div>
         </div>
@@ -315,7 +315,7 @@
             <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6 md:mb-8 animate-fade-in-up">
                 <div>
                     <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
-                        Suppliers Dashboard
+                        Suppliers Dashboard and Logistics
                     </h1>
                     <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 hidden sm:block">Total: {{ number_format($clientesActivos) }} active suppliers</p>
                 </div>

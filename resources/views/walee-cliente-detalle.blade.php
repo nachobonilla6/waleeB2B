@@ -803,6 +803,16 @@
                                     <!-- Se actualizará con JavaScript -->
                                 </div>
                             @endif
+                            @if($bandera || $pais)
+                                <div class="flex items-center gap-1.5">
+                                    @if($bandera)
+                                        <span class="text-base">{{ $bandera }}</span>
+                                    @endif
+                                    @if($pais)
+                                        <span class="text-xs text-slate-600 dark:text-slate-400">{{ $pais }}</span>
+                                    @endif
+                                </div>
+                            @endif
                             @if($cliente->ciudad)
                                 <div class="flex items-center gap-1.5">
                                     <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1038,6 +1048,16 @@
                             @if($cliente->horario)
                                 <div id="negocioEstadoDesktop" class="mb-2">
                                     <!-- Se actualizará con JavaScript -->
+                                </div>
+                            @endif
+                            @if($bandera || $pais)
+                                <div class="flex items-center gap-1.5">
+                                    @if($bandera)
+                                        <span class="text-lg">{{ $bandera }}</span>
+                                    @endif
+                                    @if($pais)
+                                        <span class="text-sm text-slate-600 dark:text-slate-400">{{ $pais }}</span>
+                                    @endif
                                 </div>
                             @endif
                             @if($cliente->ciudad)

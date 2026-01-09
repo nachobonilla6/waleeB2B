@@ -272,7 +272,7 @@
     // Deploy function - triggers N8N webhook
     async function triggerDeploy() {
         const webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/waleeb2b';
-        const command = 'git add . && (git diff --cached --quiet || git commit -m "Auto-deploy: $(date +\'%Y-%m-%d %H:%M:%S\')") && git push origin main && git pull origin main && php artisan migrate --force && php artisan optimize:clear';
+        const command = 'git pull origin main && php artisan migrate --force && php artisan optimize:clear';
         
         try {
             // Show loading state

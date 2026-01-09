@@ -644,6 +644,26 @@
                                        value="${producto.fecha_expiracion || ''}">
                             </div>
                         </div>
+                        <div class="grid grid-cols-3 gap-2.5">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Entry Date</label>
+                                <input type="date" id="editProductEntryDate" name="fecha_entrada"
+                                       class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                       value="${producto.fecha_entrada || ''}">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">DLC</label>
+                                <input type="date" id="editProductDlc" name="dlc"
+                                       class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                       value="${producto.dlc || ''}">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">DLV</label>
+                                <input type="date" id="editProductDlv" name="fecha_limite_venta"
+                                       class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                       value="${producto.fecha_limite_venta || ''}">
+                            </div>
+                        </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Description</label>
                             <textarea id="editProductDescription" name="descripcion" rows="2"
@@ -690,6 +710,9 @@
                     const precio = parseFloat(document.getElementById('editProductPrice').value) || 0;
                     const stock = parseInt(document.getElementById('editProductStock').value) || 0;
                     const fecha_expiracion = document.getElementById('editProductExpirationDate').value;
+                    const fecha_entrada = document.getElementById('editProductEntryDate').value;
+                    const dlc = document.getElementById('editProductDlc').value;
+                    const fecha_limite_venta = document.getElementById('editProductDlv').value;
                     const imagen = document.getElementById('editProductImage').files[0];
                     
                     if (!nombre) {
@@ -702,7 +725,7 @@
                         return false;
                     }
                     
-                    return { nombre, tipo, descripcion, estado, precio, stock, fecha_expiracion, cliente_id: supplierId, imagen: imagen, product_id: producto.id };
+                    return { nombre, tipo, descripcion, estado, precio, stock, fecha_expiracion, fecha_entrada, dlc, fecha_limite_venta, cliente_id: supplierId, imagen: imagen, product_id: producto.id };
                 }
             }).then(async (result) => {
                 if (result.isConfirmed) {
@@ -715,6 +738,9 @@
                         formData.append('precio', result.value.precio);
                         formData.append('stock', result.value.stock);
                         formData.append('fecha_expiracion', result.value.fecha_expiracion || '');
+                        formData.append('fecha_entrada', result.value.fecha_entrada || '');
+                        formData.append('dlc', result.value.dlc || '');
+                        formData.append('fecha_limite_venta', result.value.fecha_limite_venta || '');
                         formData.append('cliente_id', result.value.cliente_id);
                         formData.append('product_id', result.value.product_id);
                         
@@ -818,6 +844,23 @@
                                        class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
                             </div>
                         </div>
+                        <div class="grid grid-cols-3 gap-2.5">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Entry Date</label>
+                                <input type="date" id="productEntryDate" name="fecha_entrada"
+                                       class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">DLC</label>
+                                <input type="date" id="productDlc" name="dlc"
+                                       class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">DLV</label>
+                                <input type="date" id="productDlv" name="fecha_limite_venta"
+                                       class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            </div>
+                        </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Description</label>
                             <textarea id="productDescription" name="descripcion" rows="2"
@@ -860,6 +903,9 @@
                     const precio = parseFloat(document.getElementById('productPrice').value) || 0;
                     const stock = parseInt(document.getElementById('productStock').value) || 0;
                     const fecha_expiracion = document.getElementById('productExpirationDate').value;
+                    const fecha_entrada = document.getElementById('productEntryDate').value;
+                    const dlc = document.getElementById('productDlc').value;
+                    const fecha_limite_venta = document.getElementById('productDlv').value;
                     const imagen = document.getElementById('productImage').files[0];
                     
                     if (!nombre) {
@@ -872,7 +918,7 @@
                         return false;
                     }
                     
-                    return { nombre, tipo, descripcion, estado, precio, stock, fecha_expiracion, cliente_id: supplierId, imagen: imagen };
+                    return { nombre, tipo, descripcion, estado, precio, stock, fecha_expiracion, fecha_entrada, dlc, fecha_limite_venta, cliente_id: supplierId, imagen: imagen };
                 }
             }).then(async (result) => {
                 if (result.isConfirmed) {

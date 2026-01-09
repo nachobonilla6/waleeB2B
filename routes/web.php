@@ -6999,6 +6999,9 @@ Route::post('/walee-supplier/{id}/public/add-product', function (\Illuminate\Htt
             'stock' => $request->input('stock', 0),
             'cantidad' => $request->input('stock', 0),
             'fecha_expiracion' => $request->input('fecha_expiracion') ?: null,
+            'fecha_entrada' => $request->input('fecha_entrada') ?: null,
+            'dlc' => $request->input('dlc') ?: null,
+            'fecha_limite_venta' => $request->input('fecha_limite_venta') ?: null,
             'imagen' => $imagenPath,
         ]);
         
@@ -7051,6 +7054,9 @@ Route::post('/walee-supplier/{id}/public/update-product', function (\Illuminate\
             'precio' => 'required|numeric|min:0',
             'stock' => 'nullable|integer|min:0',
             'fecha_expiracion' => 'nullable|date',
+            'fecha_entrada' => 'nullable|date',
+            'dlc' => 'nullable|date',
+            'fecha_limite_venta' => 'nullable|date',
             'imagen' => 'nullable|image|max:5120', // 5MB max
         ]);
         
@@ -7062,6 +7068,9 @@ Route::post('/walee-supplier/{id}/public/update-product', function (\Illuminate\
         $producto->stock = $request->input('stock', 0);
         $producto->cantidad = $request->input('stock', 0);
         $producto->fecha_expiracion = $request->input('fecha_expiracion') ?: null;
+        $producto->fecha_entrada = $request->input('fecha_entrada') ?: null;
+        $producto->dlc = $request->input('dlc') ?: null;
+        $producto->fecha_limite_venta = $request->input('fecha_limite_venta') ?: null;
         
         // Handle image update
         if ($request->hasFile('imagen')) {

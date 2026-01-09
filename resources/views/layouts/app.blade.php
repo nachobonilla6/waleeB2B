@@ -6,6 +6,25 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', 'Soporte')</title>
+    
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="@yield('title', 'Web Solutions CR')">
+    <meta property="og:description" content="@yield('description', 'Soluciones web profesionales para tu negocio')">
+    <meta property="og:image" content="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg">
+    <meta property="og:image:url" content="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg">
+    <meta property="og:image:secure_url" content="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="Web Solutions CR">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('title', 'Web Solutions CR')">
+    <meta name="twitter:description" content="@yield('description', 'Soluciones web profesionales para tu negocio')">
+    <meta name="twitter:image" content="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>

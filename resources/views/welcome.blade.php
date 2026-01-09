@@ -9,6 +9,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web Solutions CR - Diseño y Desarrollo Web</title>
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2115/2115955.png">
+    
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="Web Solutions CR - Diseño y Desarrollo Web">
+    <meta property="og:description" content="Soluciones web profesionales para tu negocio">
+    <meta property="og:image" content="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg">
+    <meta property="og:image:url" content="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg">
+    <meta property="og:image:secure_url" content="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="Web Solutions CR">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Web Solutions CR - Diseño y Desarrollo Web">
+    <meta name="twitter:description" content="Soluciones web profesionales para tu negocio">
+    <meta name="twitter:image" content="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>

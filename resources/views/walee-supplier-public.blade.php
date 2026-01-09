@@ -73,6 +73,9 @@
         };
         $pais = $supplier->fiscal_country ?? null;
         $bandera = $pais ? $getCountryFlag($pais) : null;
+        
+        // Obtener productos del supplier
+        $productos = \App\Models\Rproducto::where('cliente_id', $supplier->id)->orderBy('created_at', 'desc')->get();
     @endphp
 
     <div class="min-h-screen relative flex flex-col">
@@ -214,9 +217,14 @@
                     <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
                         <div class="flex items-center justify-between mb-3">
                             <h2 class="text-xl font-bold text-slate-900 dark:text-white">Edit Profile</h2>
-                            <button onclick="openEditProfileModal()" class="px-4 py-2 bg-walee-500 hover:bg-walee-600 text-white rounded-lg font-medium transition-colors">
-                                Edit
-                            </button>
+                            <div class="flex items-center gap-2">
+                                <button onclick="openListOfProductsModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-lg font-medium transition-colors">
+                                    List of Products
+                                </button>
+                                <button onclick="openEditProfileModal()" class="px-4 py-2 bg-walee-500 hover:bg-walee-600 text-white rounded-lg font-medium transition-colors">
+                                    Edit
+                                </button>
+                            </div>
                         </div>
                         
                         <!-- Profile Info Display -->
@@ -415,6 +423,60 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     window.location.href = `mailto:${email}?subject=${encodeURIComponent(result.value.subject)}&body=${encodeURIComponent(result.value.message)}`;
+                }
+            });
+        }
+        
+        // List of Products Modal
+        function openListOfProductsModal() {
+            const productos = @json($productos);
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            if (!productos || productos.length === 0) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'No Products',
+                    text: 'No products found for this supplier',
+                    confirmButtonColor: '#D59F3B'
+                });
+                return;
+            }
+            
+            let productsHtml = '<div class="max-h-96 overflow-y-auto space-y-3 text-left">';
+            productos.forEach((producto, index) => {
+                productsHtml += `
+                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-3 ${isDarkMode ? 'bg-slate-800/50' : 'bg-slate-50'}">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-slate-900 dark:text-white mb-1">${producto.nombre || 'Unnamed Product'}</h3>
+                                ${producto.tipo ? `<p class="text-sm text-slate-600 dark:text-slate-400 mb-1">Type: ${producto.tipo}</p>` : ''}
+                                ${producto.descripcion ? `<p class="text-sm text-slate-600 dark:text-slate-400">${producto.descripcion}</p>` : ''}
+                                ${producto.estado ? `<span class="inline-block mt-2 px-2 py-1 text-xs rounded ${producto.estado === 'activo' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}">${producto.estado}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            productsHtml += '</div>';
+            
+            Swal.fire({
+                title: `Products (${productos.length})`,
+                html: productsHtml,
+                width: '700px',
+                padding: '1.5rem',
+                showConfirmButton: true,
+                confirmButtonText: 'Close',
+                confirmButtonColor: '#D59F3B',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html'
+                },
+                didOpen: () => {
+                    const popup = Swal.getPopup();
+                    if (isDarkMode) {
+                        popup.style.backgroundColor = '#0f172a';
+                        popup.style.color = '#e2e8f0';
+                    }
                 }
             });
         }

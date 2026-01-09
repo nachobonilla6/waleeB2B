@@ -110,6 +110,7 @@
         use App\Models\Cliente;
         use App\Models\PublicidadEvento;
         use App\Models\Factura;
+        use App\Models\ProductoSuper;
         use Carbon\Carbon;
         
         // Estadísticas generales (solo clientes con is_active = true, independiente del estado)
@@ -310,6 +311,33 @@
                 ->whereDate('created_at', $fechaStr)
                 ->count();
         }
+        
+        // Estadísticas de Stock
+        $productos = ProductoSuper::where('activo', true)->get();
+        
+        // REMAINING STOCK TO BE RECEIVED: Suma de (cantidad - stock) donde cantidad > stock
+        $remainingStockToBeReceived = $productos->sum(function($producto) {
+            $diferencia = $producto->cantidad - $producto->stock;
+            return $diferencia > 0 ? $diferencia : 0;
+        });
+        
+        // REMAINING OLD STOCK: Stock de productos con fecha_entrada mayor a 30 días
+        $fechaLimiteViejo = now()->subDays(30);
+        $remainingOldStock = $productos->filter(function($producto) use ($fechaLimiteViejo) {
+            if (!$producto->fecha_entrada) {
+                return false;
+            }
+            return Carbon::parse($producto->fecha_entrada)->lt($fechaLimiteViejo);
+        })->sum('stock');
+        
+        // TOTAL NEW STOCK: Stock de productos con fecha_entrada en los últimos 30 días
+        $fechaLimiteNuevo = now()->subDays(30);
+        $totalNewStock = $productos->filter(function($producto) use ($fechaLimiteNuevo) {
+            if (!$producto->fecha_entrada) {
+                return false;
+            }
+            return Carbon::parse($producto->fecha_entrada)->gte($fechaLimiteNuevo);
+        })->sum('stock');
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -438,17 +466,62 @@
                 </a>
                 
                 <!-- Orders Receipts Today -->
-                <a href="{{ route('walee.facturas') }}" class="stat-card bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-500/10 dark:to-emerald-600/5 border border-emerald-200 dark:border-emerald-500/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none hover:shadow-md dark:hover:shadow-lg hover:scale-105 transition-all cursor-pointer">
-                    <div class="flex items-center justify-between mb-2 sm:mb-3 md:mb-4">
-                        <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl bg-emerald-500/20 dark:bg-emerald-500/10 flex items-center justify-center">
-                            <svg class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="{{ route('walee.facturas') }}" class="stat-card bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-500/10 dark:to-emerald-600/5 border border-emerald-200 dark:border-emerald-500/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 lg:p-4 shadow-sm dark:shadow-none hover:shadow-md dark:hover:shadow-lg hover:scale-105 transition-all cursor-pointer">
+                    <div class="flex items-center justify-between mb-2 sm:mb-3 md:mb-4 lg:mb-2">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-10 lg:h-10 rounded-lg sm:rounded-xl bg-emerald-500/20 dark:bg-emerald-500/10 flex items-center justify-center">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-5 lg:h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
                     </div>
                     <div class="mb-1 sm:mb-2">
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Orders Receipts Today</p>
-                        <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($ordersReceiptsHoy) }}</p>
+                        <p class="text-xs sm:text-sm lg:text-xs text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Orders Receipts Today</p>
+                        <p class="text-xl sm:text-2xl md:text-3xl lg:text-2xl font-bold text-slate-900 dark:text-white">{{ number_format($ordersReceiptsHoy) }}</p>
+                    </div>
+                </a>
+                
+                <!-- Remaining Stock To Be Received -->
+                <a href="{{ route('walee.herramientas.inventory') }}" class="stat-card bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-500/10 dark:to-orange-600/5 border border-orange-200 dark:border-orange-500/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 lg:p-4 shadow-sm dark:shadow-none hover:shadow-md dark:hover:shadow-lg hover:scale-105 transition-all cursor-pointer">
+                    <div class="flex items-center justify-between mb-2 sm:mb-3 md:mb-4 lg:mb-2">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-10 lg:h-10 rounded-lg sm:rounded-xl bg-orange-500/20 dark:bg-orange-500/10 flex items-center justify-center">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-5 lg:h-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mb-1 sm:mb-2">
+                        <p class="text-xs sm:text-sm lg:text-xs text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Remaining Stock To Be Received</p>
+                        <p class="text-xl sm:text-2xl md:text-3xl lg:text-2xl font-bold text-slate-900 dark:text-white">{{ number_format($remainingStockToBeReceived) }}</p>
+                    </div>
+                </a>
+                
+                <!-- Remaining Old Stock -->
+                <a href="{{ route('walee.herramientas.inventory') }}" class="stat-card bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-500/10 dark:to-red-600/5 border border-red-200 dark:border-red-500/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 lg:p-4 shadow-sm dark:shadow-none hover:shadow-md dark:hover:shadow-lg hover:scale-105 transition-all cursor-pointer">
+                    <div class="flex items-center justify-between mb-2 sm:mb-3 md:mb-4 lg:mb-2">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-10 lg:h-10 rounded-lg sm:rounded-xl bg-red-500/20 dark:bg-red-500/10 flex items-center justify-center">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-5 lg:h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mb-1 sm:mb-2">
+                        <p class="text-xs sm:text-sm lg:text-xs text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Remaining Old Stock</p>
+                        <p class="text-xl sm:text-2xl md:text-3xl lg:text-2xl font-bold text-slate-900 dark:text-white">{{ number_format($remainingOldStock) }}</p>
+                    </div>
+                </a>
+                
+                <!-- Total New Stock -->
+                <a href="{{ route('walee.herramientas.inventory') }}" class="stat-card bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-500/10 dark:to-green-600/5 border border-green-200 dark:border-green-500/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 lg:p-4 shadow-sm dark:shadow-none hover:shadow-md dark:hover:shadow-lg hover:scale-105 transition-all cursor-pointer">
+                    <div class="flex items-center justify-between mb-2 sm:mb-3 md:mb-4 lg:mb-2">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-10 lg:h-10 rounded-lg sm:rounded-xl bg-green-500/20 dark:bg-green-500/10 flex items-center justify-center">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-5 lg:h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mb-1 sm:mb-2">
+                        <p class="text-xs sm:text-sm lg:text-xs text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Total New Stock</p>
+                        <p class="text-xl sm:text-2xl md:text-3xl lg:text-2xl font-bold text-slate-900 dark:text-white">{{ number_format($totalNewStock) }}</p>
                     </div>
                 </a>
             </div>

@@ -2290,7 +2290,7 @@
                         timer: 2000,
                         showConfirmButton: false
                     }).then(() => {
-                        window.location.href = '{{ route("walee.cliente.detalle", $cliente->id) }}';
+                        window.location.href = '{{ route("walee.supplier.detalle", $cliente->id) }}';
                     });
                 } else {
                     Swal.fire({

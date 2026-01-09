@@ -648,7 +648,7 @@
                                 $telefonoLimpio = $telefono ? preg_replace('/[^0-9+]/', '', $telefono) : null;
                             @endphp
                             <div class="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-violet-400 dark:hover:border-violet-500/30 hover:bg-violet-50/50 dark:hover:bg-violet-500/10 transition-all group">
-                                <a href="{{ route('walee.cliente.detalle', $item['client']->id) }}" class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                                <a href="{{ route('walee.supplier.detalle', $item['client']->id) }}" class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
                                     @if($fotoUrl)
                                         <img src="{{ $fotoUrl }}" alt="{{ $item['client']->name }}" class="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg object-cover border-2 border-violet-500/30 flex-shrink-0 group-hover:scale-110 transition-transform">
                                     @else

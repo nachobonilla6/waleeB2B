@@ -712,16 +712,9 @@
         </div>
         
         <!-- Navbar -->
-        <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        <div class="relative max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
             @php $pageTitle = $cliente->name; @endphp
             @include('partials.walee-navbar')
-        </div>
-            
-    <div class="min-h-screen relative flex flex-col">
-        <!-- Background -->
-        <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <div class="absolute -top-40 -right-40 w-80 h-80 bg-emerald-400/10 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-20 -left-20 w-60 h-60 bg-walee-400/10 rounded-full blur-3xl"></div>
         </div>
         
         <!-- Main Content -->
@@ -868,7 +861,7 @@
                     <!-- Quick Actions -->
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
                         <!-- Note Button -->
-                        <button onclick="openNotaModal()" class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-violet-100 dark:bg-violet-500/20 hover:bg-violet-200 dark:hover:bg-violet-500/30 text-violet-600 dark:text-violet-400 border border-violet-600 dark:border-violet-500/30 transition-all group shadow-sm">
+                        <button onclick="openNotaModal()" class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-violet-100 dark:bg-violet-500/20 hover:bg-violet-200 dark:hover:bg-violet-500/30 text-violet-600 dark:text-violet-400 border border-violet-600 dark:border-violet-500/30 transition-all group shadow-sm">
                             <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
@@ -876,7 +869,7 @@
                         </button>
         
                         <!-- Email Button -->
-                        <button onclick="openEmailModal()" class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-amber-100 dark:bg-amber-500/20 hover:bg-amber-200 dark:hover:bg-amber-500/30 text-amber-600 dark:text-amber-400 border border-amber-600 dark:border-amber-500/30 transition-all group shadow-sm">
+                        <button onclick="openEmailModal()" class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-amber-100 dark:bg-amber-500/20 hover:bg-amber-200 dark:hover:bg-amber-500/30 text-amber-600 dark:text-amber-400 border border-amber-600 dark:border-amber-500/30 transition-all group shadow-sm">
                             <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                             </svg>
@@ -885,7 +878,7 @@
                         
                         <!-- Facebook Button -->
                         @if($cliente->facebook)
-                            <a href="{{ $cliente->facebook }}" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-violet-100 dark:bg-violet-500/20 hover:bg-violet-200 dark:hover:bg-violet-500/30 text-violet-600 dark:text-violet-400 border border-violet-600 dark:border-violet-500/30 transition-all group shadow-sm">
+                            <a href="{{ $cliente->facebook }}" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-violet-100 dark:bg-violet-500/20 hover:bg-violet-200 dark:hover:bg-violet-500/30 text-violet-600 dark:text-violet-400 border border-violet-600 dark:border-violet-500/30 transition-all group shadow-sm">
                                 <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                                 </svg>
@@ -903,14 +896,14 @@
                         <!-- WhatsApp Button -->
                         @if($whatsappLink)
                             <button onclick="openWhatsAppModal()" 
-                                    class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-emerald-100 dark:bg-emerald-500/20 hover:bg-emerald-200 dark:hover:bg-emerald-500/30 text-emerald-600 dark:text-emerald-400 border border-emerald-600 dark:border-emerald-500/30 transition-all group shadow-sm">
+                                    class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-emerald-100 dark:bg-emerald-500/20 hover:bg-emerald-200 dark:hover:bg-emerald-500/30 text-emerald-600 dark:text-emerald-400 border border-emerald-600 dark:border-emerald-500/30 transition-all group shadow-sm">
                                 <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                                 </svg>
                                 <span class="text-sm font-semibold">WhatsApp</span>
                             </button>
                         @else
-                            <div class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed">
+                            <div class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed">
                                 <svg class="w-6 h-6 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                                 </svg>
@@ -926,37 +919,37 @@
                         @endphp
                         
                         <!-- Appointments -->
-                        <a href="{{ route('walee.calendario', ['cliente_id' => $cliente->id]) }}" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-yellow-100 dark:hover:bg-yellow-500/20 text-slate-500 dark:text-slate-400 hover:text-yellow-600 dark:hover:text-yellow-400 border border-slate-300 dark:border-slate-700 hover:border-yellow-300 dark:hover:border-yellow-500/30 transition-all shadow-sm cursor-pointer">
+                        <a href="{{ route('walee.calendario', ['cliente_id' => $cliente->id]) }}" class="flex flex-col items-center justify-center gap-1 py-3 px-4 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-yellow-100 dark:hover:bg-yellow-500/20 text-slate-500 dark:text-slate-400 hover:text-yellow-600 dark:hover:text-yellow-400 border border-slate-300 dark:border-slate-700 hover:border-yellow-300 dark:hover:border-yellow-500/30 transition-all shadow-sm cursor-pointer">
                             <span class="text-xs font-medium">Appointments</span>
                             <span class="text-sm font-bold">{{ $totalCitas }}</span>
                         </a>
                         
                         <!-- Invoices -->
-                        <a href="{{ route('walee.facturas.crear') }}?cliente_id={{ $cliente->id }}" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-red-100 dark:hover:bg-red-500/20 text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 border border-slate-300 dark:border-slate-700 hover:border-red-300 dark:hover:border-red-500/30 transition-all shadow-sm cursor-pointer">
+                        <a href="{{ route('walee.facturas.crear') }}?cliente_id={{ $cliente->id }}" class="flex flex-col items-center justify-center gap-1 py-3 px-4 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-red-100 dark:hover:bg-red-500/20 text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 border border-slate-300 dark:border-slate-700 hover:border-red-300 dark:hover:border-red-500/30 transition-all shadow-sm cursor-pointer">
                             <span class="text-xs font-medium">Invoices</span>
                             <span class="text-sm font-bold">{{ $facturas->count() }}</span>
                         </a>
                         
                         <!-- Quotes -->
-                        <a href="{{ route('walee.cotizaciones.crear') }}?cliente_id={{ $cliente->id }}" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-blue-100 dark:hover:bg-blue-500/20 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 border border-slate-300 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500/30 transition-all shadow-sm cursor-pointer">
+                        <a href="{{ route('walee.cotizaciones.crear') }}?cliente_id={{ $cliente->id }}" class="flex flex-col items-center justify-center gap-1 py-3 px-4 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-blue-100 dark:hover:bg-blue-500/20 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 border border-slate-300 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500/30 transition-all shadow-sm cursor-pointer">
                             <span class="text-xs font-medium">Quotes</span>
                             <span class="text-sm font-bold">{{ $cotizaciones->count() }}</span>
                         </a>
                         
                         <!-- Contracts -->
-                        <a href="{{ route('walee.contratos.cliente', $cliente->id) }}" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-orange-100 dark:hover:bg-orange-500/20 text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 border border-slate-300 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-500/30 transition-all shadow-sm cursor-pointer">
+                        <a href="{{ route('walee.contratos.cliente', $cliente->id) }}" class="flex flex-col items-center justify-center gap-1 py-3 px-4 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-orange-100 dark:hover:bg-orange-500/20 text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 border border-slate-300 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-500/30 transition-all shadow-sm cursor-pointer">
                             <span class="text-xs font-medium">Contracts</span>
                             <span class="text-sm font-bold">{{ $contratos->count() }}</span>
                         </a>
                         
                         <!-- Products -->
-                        <a href="{{ route('walee.productos.cliente', $cliente->id) }}" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-violet-100 dark:bg-violet-500/20 hover:bg-violet-200 dark:hover:bg-violet-500/30 text-violet-700 dark:text-violet-400 border border-violet-300 dark:border-violet-500/30 transition-all shadow-sm cursor-pointer">
+                        <a href="{{ route('walee.productos.cliente', $cliente->id) }}" class="flex flex-col items-center justify-center gap-1 py-3 px-4 rounded-lg bg-violet-100 dark:bg-violet-500/20 hover:bg-violet-200 dark:hover:bg-violet-500/30 text-violet-700 dark:text-violet-400 border border-violet-300 dark:border-violet-500/30 transition-all shadow-sm cursor-pointer">
                             <span class="text-xs font-medium">Products</span>
                             <span class="text-sm font-bold">{{ $productos->count() ?? 0 }}</span>
                         </a>
                         
                         <!-- Emails Enviados -->
-                        <a href="{{ route('walee.emails.enviados') }}?cliente_id={{ $cliente->id }}" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-300 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-500/30 transition-all shadow-sm cursor-pointer">
+                        <a href="{{ route('walee.emails.enviados') }}?cliente_id={{ $cliente->id }}" class="flex flex-col items-center justify-center gap-1 py-3 px-4 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-300 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-500/30 transition-all shadow-sm cursor-pointer">
                             <span class="text-xs font-medium">Emails Enviados</span>
                             <span class="text-sm font-bold">{{ $emailsEnviados ?? 0 }}</span>
                         </a>

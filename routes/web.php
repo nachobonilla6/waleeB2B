@@ -6952,7 +6952,26 @@ Route::post('/walee-supplier/{id}/public/add-product', function (\Illuminate\Htt
             'descripcion' => 'nullable|string',
             'estado' => 'nullable|in:activo,inactivo',
             'stock' => 'nullable|integer|min:0',
+            'imagen' => 'nullable|image|max:5120', // 5MB max
         ]);
+        
+        $imagenPath = null;
+        if ($request->hasFile('imagen')) {
+            // Asegurar que el directorio existe
+            $productosDir = storage_path('app/public/productos');
+            if (!file_exists($productosDir)) {
+                mkdir($productosDir, 0755, true);
+            }
+            
+            $path = $request->file('imagen')->store('productos', 'public');
+            $imagenPath = $path;
+            
+            // Asegurar permisos públicos
+            $fullPath = storage_path('app/public/' . $path);
+            if (file_exists($fullPath)) {
+                chmod($fullPath, 0644);
+            }
+        }
         
         $producto = \App\Models\ProductoSuper::create([
             'cliente_id' => $supplier->id,
@@ -6962,6 +6981,7 @@ Route::post('/walee-supplier/{id}/public/add-product', function (\Illuminate\Htt
             'activo' => $request->input('estado') === 'activo',
             'stock' => $request->input('stock', 0),
             'cantidad' => $request->input('stock', 0),
+            'imagen' => $imagenPath,
         ]);
         
         return response()->json([

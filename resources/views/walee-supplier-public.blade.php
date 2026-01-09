@@ -530,16 +530,23 @@
                                       class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                                       placeholder="Product description"></textarea>
                         </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Image</label>
+                            <input type="file" id="productImage" name="imagen" accept="image/*"
+                                   class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Optional: Upload product image</p>
+                        </div>
                     </form>
                 `,
                 width: '500px',
                 padding: '1rem',
-                maxHeight: '500px',
+                maxHeight: '600px',
                 showCancelButton: true,
                 confirmButtonText: 'Add Product',
                 cancelButtonText: 'Cancel',
                 confirmButtonColor: '#10b981',
                 cancelButtonColor: '#6b7280',
+                reverseButtons: true,
                 customClass: {
                     popup: isDarkMode ? 'dark-swal' : 'light-swal',
                     htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html'
@@ -557,24 +564,36 @@
                     const descripcion = document.getElementById('productDescription').value.trim();
                     const estado = document.getElementById('productStatus').value;
                     const stock = parseInt(document.getElementById('productStock').value) || 0;
+                    const imagen = document.getElementById('productImage').files[0];
                     
                     if (!nombre) {
                         Swal.showValidationMessage('Product name is required');
                         return false;
                     }
                     
-                    return { nombre, tipo, descripcion, estado, stock, cliente_id: supplierId };
+                    return { nombre, tipo, descripcion, estado, stock, cliente_id: supplierId, imagen: imagen };
                 }
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
+                        const formData = new FormData();
+                        formData.append('nombre', result.value.nombre);
+                        formData.append('tipo', result.value.tipo);
+                        formData.append('descripcion', result.value.descripcion);
+                        formData.append('estado', result.value.estado);
+                        formData.append('stock', result.value.stock);
+                        formData.append('cliente_id', result.value.cliente_id);
+                        
+                        if (result.value.imagen) {
+                            formData.append('imagen', result.value.imagen);
+                        }
+                        
                         const response = await fetch('{{ route("walee.supplier.public.add-product", $supplier->id) }}', {
                             method: 'POST',
                             headers: {
-                                'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                             },
-                            body: JSON.stringify(result.value)
+                            body: formData
                         });
                         
                         const data = await response.json();

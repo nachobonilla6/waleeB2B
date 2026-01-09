@@ -1724,37 +1724,28 @@
             const estado = getEstadoHorario(horario, clientTimezone);
             
             // Indicador principal del negocio (destacado)
-            const negocioEstadoMobile = document.getElementById('negocioEstadoMobile');
-            const negocioEstadoDesktop = document.getElementById('negocioEstadoDesktop');
+            const negocioEstado = document.getElementById('negocioEstado');
             
             if (estado.abierto === true) {
                 const badgePrincipal = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit"><div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>Negocio Abierto</span>';
-                if (negocioEstadoMobile) negocioEstadoMobile.innerHTML = badgePrincipal;
-                if (negocioEstadoDesktop) negocioEstadoDesktop.innerHTML = badgePrincipal;
+                if (negocioEstado) negocioEstado.innerHTML = badgePrincipal;
             } else if (estado.abierto === false) {
                 const badgePrincipal = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 rounded-full border border-red-600 dark:border-red-500/30 w-fit"><div class="w-2 h-2 rounded-full bg-red-400"></div>Negocio Cerrado</span>';
-                if (negocioEstadoMobile) negocioEstadoMobile.innerHTML = badgePrincipal;
-                if (negocioEstadoDesktop) negocioEstadoDesktop.innerHTML = badgePrincipal;
+                if (negocioEstado) negocioEstado.innerHTML = badgePrincipal;
             }
             
             // Badge pequeño en el botón de horario
-            const estadoMobile = document.getElementById('horarioEstado');
-            const estadoDesktop = document.getElementById('horarioEstadoDesktop');
-            const btnMobile = document.getElementById('horarioBtn');
-            const btnDesktop = document.getElementById('horarioBtnDesktop');
+            const estadoHorario = document.getElementById('horarioEstado');
+            const btnHorario = document.getElementById('horarioBtn');
             
             if (estado.abierto === true) {
                 const badge = '<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300">Abierto</span>';
-                if (estadoMobile) estadoMobile.innerHTML = badge;
-                if (estadoDesktop) estadoDesktop.innerHTML = badge;
-                if (btnMobile) btnMobile.classList.add('border-emerald-300', 'dark:border-emerald-700');
-                if (btnDesktop) btnDesktop.classList.add('border-emerald-300', 'dark:border-emerald-700');
+                if (estadoHorario) estadoHorario.innerHTML = badge;
+                if (btnHorario) btnHorario.classList.add('border-emerald-300', 'dark:border-emerald-700');
             } else if (estado.abierto === false) {
                 const badge = '<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300">Cerrado</span>';
-                if (estadoMobile) estadoMobile.innerHTML = badge;
-                if (estadoDesktop) estadoDesktop.innerHTML = badge;
-                if (btnMobile) btnMobile.classList.add('border-red-300', 'dark:border-red-700');
-                if (btnDesktop) btnDesktop.classList.add('border-red-300', 'dark:border-red-700');
+                if (estadoHorario) estadoHorario.innerHTML = badge;
+                if (btnHorario) btnHorario.classList.add('border-red-300', 'dark:border-red-700');
             }
             
             // Función para actualizar el estado del horario
@@ -1764,12 +1755,10 @@
                 // Actualizar indicador principal
                 if (nuevoEstado.abierto === true) {
                     const badgePrincipal = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit"><div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>Negocio Abierto</span>';
-                    if (negocioEstadoMobile) negocioEstadoMobile.innerHTML = badgePrincipal;
-                    if (negocioEstadoDesktop) negocioEstadoDesktop.innerHTML = badgePrincipal;
+                    if (negocioEstado) negocioEstado.innerHTML = badgePrincipal;
                 } else if (nuevoEstado.abierto === false) {
                     const badgePrincipal = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 rounded-full border border-red-600 dark:border-red-500/30 w-fit"><div class="w-2 h-2 rounded-full bg-red-400"></div>Negocio Cerrado</span>';
-                    if (negocioEstadoMobile) negocioEstadoMobile.innerHTML = badgePrincipal;
-                    if (negocioEstadoDesktop) negocioEstadoDesktop.innerHTML = badgePrincipal;
+                    if (negocioEstado) negocioEstado.innerHTML = badgePrincipal;
                 }
                 
                 // Actualizar badges en botones

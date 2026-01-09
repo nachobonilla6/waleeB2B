@@ -1772,13 +1772,9 @@
                 } else if (nuevoEstado.abierto === false) {
                     const badge = '<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300">Cerrado</span>';
                     if (estadoHorario) estadoHorario.innerHTML = badge;
-                    if (btnMobile) {
-                        btnMobile.classList.remove('border-emerald-300', 'dark:border-emerald-700');
-                        btnMobile.classList.add('border-red-300', 'dark:border-red-700');
-                    }
-                    if (btnDesktop) {
-                        btnDesktop.classList.remove('border-emerald-300', 'dark:border-emerald-700');
-                        btnDesktop.classList.add('border-red-300', 'dark:border-red-700');
+                    if (btnHorario) {
+                        btnHorario.classList.remove('border-emerald-300', 'dark:border-emerald-700');
+                        btnHorario.classList.add('border-red-300', 'dark:border-red-700');
                     }
                 }
             }

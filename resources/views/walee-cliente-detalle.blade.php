@@ -717,11 +717,18 @@
             @include('partials.walee-navbar')
         </div>
             
-        <!-- Contenido principal -->
-        <div class="relative max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 pb-6 flex flex-col">
+    <div class="min-h-screen relative flex flex-col">
+        <!-- Background -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-emerald-400/10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 -left-20 w-60 h-60 bg-walee-400/10 rounded-full blur-3xl"></div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="relative max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8 w-full">
             @include('partials.walee-back-button')
             <!-- Botón del extractor fuera de la sección, esquina superior derecha (desactivado) -->
-            <div class="absolute top-0 right-4 sm:right-6 z-30">
+            <div class="absolute top-6 right-4 sm:right-6 z-30">
                 <span class="inline-flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg bg-gray-400/80 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg cursor-not-allowed opacity-60" title="Extractor desactivado">
                     <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
@@ -730,9 +737,8 @@
                 </span>
             </div>
             
-            <!-- Header Profesional -->
-            <div class="mb-3 sm:mb-4 lg:mb-6 flex flex-col w-full header-profesional-wrapper">
-                <div class="relative w-full bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none header-profesional-card">
+            <!-- Supplier Profile Card -->
+            <div class="bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none p-4 sm:p-5">
                     @php
                         $fotoPath = $cliente->foto ?? null;
                         $fotoUrl = null;
@@ -762,21 +768,21 @@
                         </button>
                     </div>
                     
-                    <!-- Mobile: Layout reorganizado -->
-                    <div class="block sm:hidden w-full">
-                        <div class="flex items-start gap-3 p-3 w-full">
-                            <!-- Imagen a la izquierda -->
-                            <div class="relative w-1/2 aspect-square flex-shrink-0">
-                    @if($fotoUrl)
-                                    <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-xl">
-                    @else
-                                    <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-xl opacity-80">
-                    @endif
+                    <!-- Header -->
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
+                        <div class="flex items-center gap-4 flex-1">
+                            <!-- Foto -->
+                            <div class="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden border-2 border-emerald-500/30 shadow-sm flex-shrink-0">
+                                @if($fotoUrl)
+                                    <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover">
+                                @else
+                                    <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-full h-full object-cover opacity-80">
+                                @endif
                             </div>
                             
-                            <!-- Nombre y estado a la derecha -->
-                    <div class="flex-1 min-w-0">
-                                <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white break-words mb-2">{{ $cliente->name }}</h1>
+                            <!-- Nombre y Info -->
+                            <div class="flex-1 min-w-0">
+                                <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">{{ $cliente->name }}</h1>
                                 <div class="flex flex-col">
                                     <span class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Status:</span>
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit mb-1.5">
@@ -1137,51 +1143,59 @@
                                 </div>
                             @endif
                             
-                            <!-- Acciones Rápidas Desktop -->
-                            <div class="flex flex-wrap gap-2.5">
-                                <!-- Note Button -->
-                                <button onclick="openNotaModal()" class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 hover:from-violet-100 hover:to-violet-200/50 dark:hover:from-violet-500/20 dark:hover:to-violet-600/10 text-violet-700 dark:text-violet-400 border border-violet-200/50 dark:border-violet-500/20 hover:border-violet-300 dark:hover:border-violet-500/30 transition-all group shadow-sm hover:shadow-md active:scale-[0.98]" title="Note">
-                                    <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                    </svg>
-                                    <span class="text-sm font-semibold">Note</span>
-                                </button>
-            
-                                <!-- Email Button -->
-                                <button type="button" onclick="(function(){ console.log('=== DEBUG: Click en botón de email (desktop) ==='); console.log('window.openEmailModal:', typeof window.openEmailModal); console.log('window keys con Email:', Object.keys(window).filter(k => k.toLowerCase().includes('email'))); console.log('window keys con Modal:', Object.keys(window).filter(k => k.toLowerCase().includes('modal'))); console.log('window keys con Phase:', Object.keys(window).filter(k => k.toLowerCase().includes('phase'))); try { if(typeof window.openEmailModal === 'function') { console.log('✓ Llamando a window.openEmailModal()'); window.openEmailModal(); } else { console.error('✗ ERROR: window.openEmailModal no es una función'); console.error('Tipo:', typeof window.openEmailModal); console.error('Valor:', window.openEmailModal); console.error('Todas las keys de window:', Object.keys(window).slice(0, 50)); alert('Error: La función de email no está disponible.\n\nTipo: ' + typeof window.openEmailModal + '\n\nRevisa la consola para más detalles.'); } } catch(e) { console.error('✗ EXCEPCIÓN al ejecutar:', e); console.error('Stack:', e.stack); alert('Error: ' + e.message + '\n\nRevisa la consola para más detalles.'); } })();" class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-500/10 dark:to-amber-600/5 hover:from-amber-100 hover:to-amber-200/50 dark:hover:from-amber-500/20 dark:hover:to-amber-600/10 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-500/20 hover:border-amber-300 dark:hover:border-amber-500/30 transition-all group shadow-sm hover:shadow-md active:scale-[0.98]">
-                                    <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                    </svg>
-                                    <span class="text-sm font-semibold">Email</span>
-                                </button>
-                                
-                                <!-- Facebook Button -->
-                                @if($cliente->facebook)
-                                    <a href="{{ $cliente->facebook }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 hover:from-violet-100 hover:to-violet-200/50 dark:hover:from-violet-500/20 dark:hover:to-violet-600/10 text-violet-700 dark:text-violet-400 border border-violet-200/50 dark:border-violet-500/20 hover:border-violet-300 dark:hover:border-violet-500/30 transition-all group shadow-sm hover:shadow-md active:scale-[0.98]">
-                                        <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                        </svg>
-                                        <span class="text-sm font-semibold">Facebook</span>
-                                    </a>
-                                @else
-                                    <div class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 opacity-50 cursor-not-allowed" title="Agregue un link de Facebook para activar">
-                                        <svg class="w-5 h-5 flex-shrink-0 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                        </svg>
-                                        <span class="text-sm font-semibold text-slate-400">Facebook</span>
-                                    </div>
-                                @endif
-                    
-                                <!-- WhatsApp Button -->
-                                <button onclick="openWhatsAppModal()" 
-                                        class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-500/10 dark:to-emerald-600/5 hover:from-emerald-100 hover:to-emerald-200/50 dark:hover:from-emerald-500/20 dark:hover:to-emerald-600/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-500/20 hover:border-emerald-300 dark:hover:border-emerald-500/30 transition-all group shadow-sm hover:shadow-md active:scale-[0.98] {{ !$whatsappLink ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                        {{ !$whatsappLink ? 'disabled' : '' }}>
-                                    <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                                    </svg>
-                                    <span class="text-sm font-semibold">WhatsApp</span>
-                                </button>
+                    <!-- Quick Actions -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                        <!-- Note Button -->
+                        <button onclick="openNotaModal()" class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-violet-100 dark:bg-violet-500/20 hover:bg-violet-200 dark:hover:bg-violet-500/30 text-violet-600 dark:text-violet-400 border border-violet-600 dark:border-violet-500/30 transition-all group shadow-sm">
+                            <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <span class="text-sm font-semibold">Note</span>
+                        </button>
+        
+                        <!-- Email Button -->
+                        <button onclick="openEmailModal()" class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-amber-100 dark:bg-amber-500/20 hover:bg-amber-200 dark:hover:bg-amber-500/30 text-amber-600 dark:text-amber-400 border border-amber-600 dark:border-amber-500/30 transition-all group shadow-sm">
+                            <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            <span class="text-sm font-semibold">Email</span>
+                        </button>
+                        
+                        <!-- Facebook Button -->
+                        @if($cliente->facebook)
+                            <a href="{{ $cliente->facebook }}" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-violet-100 dark:bg-violet-500/20 hover:bg-violet-200 dark:hover:bg-violet-500/30 text-violet-600 dark:text-violet-400 border border-violet-600 dark:border-violet-500/30 transition-all group shadow-sm">
+                                <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                </svg>
+                                <span class="text-sm font-semibold">Facebook</span>
+                            </a>
+                        @else
+                            <div class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed">
+                                <svg class="w-6 h-6 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                </svg>
+                                <span class="text-sm font-semibold text-slate-400">Facebook</span>
                             </div>
+                        @endif
+        
+                        <!-- WhatsApp Button -->
+                        @if($whatsappLink)
+                            <button onclick="openWhatsAppModal()" 
+                                    class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-emerald-100 dark:bg-emerald-500/20 hover:bg-emerald-200 dark:hover:bg-emerald-500/30 text-emerald-600 dark:text-emerald-400 border border-emerald-600 dark:border-emerald-500/30 transition-all group shadow-sm">
+                                <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                                </svg>
+                                <span class="text-sm font-semibold">WhatsApp</span>
+                            </button>
+                        @else
+                            <div class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed">
+                                <svg class="w-6 h-6 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                                </svg>
+                                <span class="text-sm font-semibold text-slate-400">WhatsApp</span>
+                            </div>
+                        @endif
+                    </div>
             
                             <!-- Alertas Desktop -->
                             <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3">

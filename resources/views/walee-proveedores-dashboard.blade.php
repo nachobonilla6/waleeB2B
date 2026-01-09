@@ -168,9 +168,8 @@
             ->limit(5)
             ->get();
         
-        // Todos los suppliers activos de la tabla suppliers
-        $todosLosSuppliers = Client::where('is_active', true)
-            ->orderBy('name', 'asc')
+        // Todos los suppliers de la tabla suppliers (sin filtrar por is_active)
+        $todosLosSuppliers = Client::orderBy('name', 'asc')
             ->get();
         
         // Formatear para mantener compatibilidad con el HTML existente

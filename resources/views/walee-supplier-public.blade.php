@@ -74,8 +74,12 @@
         $pais = $supplier->fiscal_country ?? null;
         $bandera = $pais ? $getCountryFlag($pais) : null;
         
-        // Obtener productos del supplier
+        // Obtener productos del supplier con URLs de imágenes
         $productos = \App\Models\ProductoSuper::where('cliente_id', $supplier->id)->orderBy('created_at', 'desc')->get();
+        $productos = $productos->map(function($producto) {
+            $producto->imagen_url = $producto->imagen ? asset('storage/' . $producto->imagen) : null;
+            return $producto;
+        });
     @endphp
 
     <div class="min-h-screen relative flex flex-col">
@@ -445,17 +449,40 @@
                 return;
             }
             
-            let productsHtml = '<div class="max-h-96 overflow-y-auto space-y-3 text-left">';
+            let productsHtml = '<div class="max-h-96 overflow-y-auto space-y-2 text-left">';
             productos.forEach((producto, index) => {
+                const imagenUrl = producto.imagen_url || 'https://via.placeholder.com/80x80?text=No+Image';
                 productsHtml += `
-                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-3 ${isDarkMode ? 'bg-slate-800/50' : 'bg-slate-50'}">
-                        <div class="flex items-start justify-between gap-3">
-                            <div class="flex-1">
-                                <h3 class="font-semibold text-slate-900 dark:text-white mb-1">${producto.nombre || 'Unnamed Product'}</h3>
-                                ${producto.categoria ? `<p class="text-sm text-slate-600 dark:text-slate-400 mb-1">Category: ${producto.categoria}</p>` : ''}
-                                ${producto.descripcion ? `<p class="text-sm text-slate-600 dark:text-slate-400 mb-1">${producto.descripcion}</p>` : ''}
-                                ${producto.stock !== undefined ? `<p class="text-sm text-slate-600 dark:text-slate-400 mb-1">Stock: ${producto.stock}</p>` : ''}
-                                ${producto.activo !== undefined ? `<span class="inline-block mt-2 px-2 py-1 text-xs rounded ${producto.activo ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}">${producto.activo ? 'Active' : 'Inactive'}</span>` : ''}
+                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-2 ${isDarkMode ? 'bg-slate-800/50' : 'bg-slate-50'}">
+                        <div class="flex items-center gap-3">
+                            <div class="flex-shrink-0">
+                                <img src="${imagenUrl}" alt="${producto.nombre || 'Product'}" 
+                                     class="w-16 h-16 object-cover rounded-lg border border-slate-300 dark:border-slate-600">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-0.5 truncate">${producto.nombre || 'Unnamed Product'}</h3>
+                                <div class="flex flex-wrap gap-2 text-xs text-slate-600 dark:text-slate-400">
+                                    ${producto.categoria ? `<span>${producto.categoria}</span>` : ''}
+                                    ${producto.precio !== undefined ? `<span>$${parseFloat(producto.precio).toFixed(2)}</span>` : ''}
+                                    ${producto.stock !== undefined ? `<span>Stock: ${producto.stock}</span>` : ''}
+                                </div>
+                                ${producto.activo !== undefined ? `<span class="inline-block mt-1 px-1.5 py-0.5 text-xs rounded ${producto.activo ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}">${producto.activo ? 'Active' : 'Inactive'}</span>` : ''}
+                            </div>
+                            <div class="flex-shrink-0 flex gap-1">
+                                <button onclick="editProductFromModal(${producto.id})" 
+                                        class="p-1.5 text-walee-500 hover:bg-walee-500/10 rounded transition-colors" 
+                                        title="Edit">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                </button>
+                                <button onclick="deleteProductFromModal(${producto.id})" 
+                                        class="p-1.5 text-red-500 hover:bg-red-500/10 rounded transition-colors" 
+                                        title="Delete">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    </svg>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -467,7 +494,7 @@
                 title: `Products (${productos.length})`,
                 html: productsHtml,
                 width: '700px',
-                padding: '1.5rem',
+                padding: '1rem',
                 showConfirmButton: true,
                 confirmButtonText: 'Close',
                 confirmButtonColor: '#D59F3B',
@@ -480,6 +507,249 @@
                     if (isDarkMode) {
                         popup.style.backgroundColor = '#0f172a';
                         popup.style.color = '#e2e8f0';
+                    }
+                }
+            });
+        }
+        
+        // Edit Product from Modal
+        function editProductFromModal(productId) {
+            Swal.close();
+            const productos = @json($productos);
+            const producto = productos.find(p => p.id === productId);
+            
+            if (!producto) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Product not found',
+                    confirmButtonColor: '#ef4444'
+                });
+                return;
+            }
+            
+            openEditProductModal(producto);
+        }
+        
+        // Delete Product from Modal
+        async function deleteProductFromModal(productId) {
+            const result = await Swal.fire({
+                title: 'Delete Product?',
+                text: 'This action cannot be undone',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                reverseButtons: true
+            });
+            
+            if (!result.isConfirmed) return;
+            
+            try {
+                const response = await fetch(`{{ route("walee.supplier.public.delete-product", $supplier->id) }}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ product_id: productId })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted',
+                        text: 'Product deleted successfully',
+                        confirmButtonColor: '#10b981',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Failed to delete product',
+                        confirmButtonColor: '#ef4444'
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred. Please try again.',
+                    confirmButtonColor: '#ef4444'
+                });
+            }
+        }
+        
+        // Edit Product Modal
+        function openEditProductModal(producto) {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const supplierId = @json($supplier->id);
+            const imagenUrl = producto.imagen_url || '';
+            
+            Swal.fire({
+                title: 'Edit Product',
+                html: `
+                    <form id="editProductForm" class="space-y-2.5 text-left">
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Product Name *</label>
+                                <input type="text" id="editProductName" name="nombre" required
+                                       class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                       value="${producto.nombre || ''}">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Type</label>
+                                <input type="text" id="editProductType" name="tipo"
+                                       class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                       value="${producto.categoria || ''}">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Price *</label>
+                                <div class="relative">
+                                    <span class="absolute left-2 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">$</span>
+                                    <input type="number" id="editProductPrice" name="precio" min="0" step="0.01" value="${producto.precio || 0}" required
+                                           class="w-full pl-6 pr-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Stock Quantity</label>
+                                <input type="number" id="editProductStock" name="stock" min="0" value="${producto.stock || 0}"
+                                       class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Status</label>
+                                <select id="editProductStatus" name="estado"
+                                        class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                    <option value="activo" ${producto.activo ? 'selected' : ''}>Active</option>
+                                    <option value="inactivo" ${!producto.activo ? 'selected' : ''}>Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Description</label>
+                            <textarea id="editProductDescription" name="descripcion" rows="2"
+                                      class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">${producto.descripcion || ''}</textarea>
+                        </div>
+                        ${imagenUrl ? `
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Current Image</label>
+                            <img src="${imagenUrl}" alt="Current" class="w-20 h-20 object-cover rounded-lg border border-slate-300 dark:border-slate-600">
+                        </div>
+                        ` : ''}
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Change Image</label>
+                            <input type="file" id="editProductImage" name="imagen" accept="image/*"
+                                   class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Optional: Upload new product image</p>
+                        </div>
+                    </form>
+                `,
+                width: '500px',
+                padding: '1rem',
+                maxHeight: '600px',
+                showCancelButton: true,
+                confirmButtonText: 'Save',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: '#6b7280',
+                reverseButtons: true,
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html'
+                },
+                didOpen: () => {
+                    const popup = Swal.getPopup();
+                    if (isDarkMode) {
+                        popup.style.backgroundColor = '#0f172a';
+                        popup.style.color = '#e2e8f0';
+                    }
+                },
+                preConfirm: () => {
+                    const nombre = document.getElementById('editProductName').value.trim();
+                    const tipo = document.getElementById('editProductType').value.trim();
+                    const descripcion = document.getElementById('editProductDescription').value.trim();
+                    const estado = document.getElementById('editProductStatus').value;
+                    const precio = parseFloat(document.getElementById('editProductPrice').value) || 0;
+                    const stock = parseInt(document.getElementById('editProductStock').value) || 0;
+                    const imagen = document.getElementById('editProductImage').files[0];
+                    
+                    if (!nombre) {
+                        Swal.showValidationMessage('Product name is required');
+                        return false;
+                    }
+                    
+                    if (precio < 0) {
+                        Swal.showValidationMessage('Price must be greater than or equal to 0');
+                        return false;
+                    }
+                    
+                    return { nombre, tipo, descripcion, estado, precio, stock, cliente_id: supplierId, imagen: imagen, product_id: producto.id };
+                }
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const formData = new FormData();
+                        formData.append('nombre', result.value.nombre);
+                        formData.append('tipo', result.value.tipo);
+                        formData.append('descripcion', result.value.descripcion);
+                        formData.append('estado', result.value.estado);
+                        formData.append('precio', result.value.precio);
+                        formData.append('stock', result.value.stock);
+                        formData.append('cliente_id', result.value.cliente_id);
+                        formData.append('product_id', result.value.product_id);
+                        
+                        if (result.value.imagen) {
+                            formData.append('imagen', result.value.imagen);
+                        }
+                        
+                        const response = await fetch('{{ route("walee.supplier.public.update-product", $supplier->id) }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                            },
+                            body: formData
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: 'Product updated successfully',
+                                confirmButtonColor: '#10b981',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Failed to update product',
+                                confirmButtonColor: '#ef4444'
+                            });
+                        }
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred. Please try again.',
+                            confirmButtonColor: '#ef4444'
+                        });
                     }
                 }
             });

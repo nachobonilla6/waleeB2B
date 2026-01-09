@@ -7005,6 +7005,131 @@ Route::post('/walee-supplier/{id}/public/add-product', function (\Illuminate\Htt
     }
 })->name('walee.supplier.public.add-product');
 
+Route::post('/walee-supplier/{id}/public/update-product', function (\Illuminate\Http\Request $request, $id) {
+    // Check authentication
+    if (!$request->session()->has('supplier_public_authenticated_' . $id)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Not authenticated'
+        ], 401);
+    }
+    
+    $supplier = \App\Models\Client::findOrFail($id);
+    $productId = $request->input('product_id');
+    $producto = \App\Models\ProductoSuper::findOrFail($productId);
+    
+    // Verify product belongs to supplier
+    if ($producto->cliente_id != $supplier->id) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Product does not belong to this supplier'
+        ], 403);
+    }
+    
+    try {
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'tipo' => 'nullable|string|max:255',
+            'descripcion' => 'nullable|string',
+            'estado' => 'nullable|in:activo,inactivo',
+            'precio' => 'required|numeric|min:0',
+            'stock' => 'nullable|integer|min:0',
+            'imagen' => 'nullable|image|max:5120', // 5MB max
+        ]);
+        
+        $producto->nombre = $request->input('nombre');
+        $producto->categoria = $request->input('tipo');
+        $producto->descripcion = $request->input('descripcion');
+        $producto->precio = $request->input('precio', 0);
+        $producto->activo = $request->input('estado') === 'activo';
+        $producto->stock = $request->input('stock', 0);
+        $producto->cantidad = $request->input('stock', 0);
+        
+        // Handle image update
+        if ($request->hasFile('imagen')) {
+            // Delete old image if exists
+            if ($producto->imagen && file_exists(storage_path('app/public/' . $producto->imagen))) {
+                unlink(storage_path('app/public/' . $producto->imagen));
+            }
+            
+            // Asegurar que el directorio existe
+            $productosDir = storage_path('app/public/productos-super');
+            if (!file_exists($productosDir)) {
+                mkdir($productosDir, 0755, true);
+            }
+            
+            $path = $request->file('imagen')->store('productos-super', 'public');
+            $producto->imagen = $path;
+            
+            // Asegurar permisos públicos
+            $fullPath = storage_path('app/public/' . $path);
+            if (file_exists($fullPath)) {
+                chmod($fullPath, 0644);
+            }
+        }
+        
+        $producto->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Product updated successfully',
+            'product' => $producto
+        ]);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Validation error',
+            'errors' => $e->errors()
+        ], 422);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to update product: ' . $e->getMessage()
+        ], 500);
+    }
+})->name('walee.supplier.public.update-product');
+
+Route::post('/walee-supplier/{id}/public/delete-product', function (\Illuminate\Http\Request $request, $id) {
+    // Check authentication
+    if (!$request->session()->has('supplier_public_authenticated_' . $id)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Not authenticated'
+        ], 401);
+    }
+    
+    $supplier = \App\Models\Client::findOrFail($id);
+    $productId = $request->input('product_id');
+    $producto = \App\Models\ProductoSuper::findOrFail($productId);
+    
+    // Verify product belongs to supplier
+    if ($producto->cliente_id != $supplier->id) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Product does not belong to this supplier'
+        ], 403);
+    }
+    
+    try {
+        // Delete image if exists
+        if ($producto->imagen && file_exists(storage_path('app/public/' . $producto->imagen))) {
+            unlink(storage_path('app/public/' . $producto->imagen));
+        }
+        
+        $producto->delete();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Product deleted successfully'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to delete product: ' . $e->getMessage()
+        ], 500);
+    }
+})->name('walee.supplier.public.delete-product');
+
 // Ruta para editar un cliente
 Route::get('/walee-supplier/{id}/editar', function ($id) {
     $cliente = \App\Models\Client::findOrFail($id);

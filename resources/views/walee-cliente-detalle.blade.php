@@ -1060,32 +1060,6 @@
             </div>
         </div>
     </div>
-                            src="{{ $websiteUrl }}"
-                            width="100%"
-                            height="100%"
-                            style="border:0"
-                            loading="lazy"
-                            allowfullscreen
-                            referrerpolicy="no-referrer-when-downgrade"
-                            class="website-iframe"
-                        ></iframe>
-                    </div>
-                </div>
-            </div>
-            @endif
-            
-            <!-- World Map with Clocks -->
-            @include('partials.walee-world-map-clocks')
-            
-            <!-- Footer -->
-            <footer class="text-center py-4 sm:py-6 mt-4 sm:mt-6">
-                <p class="text-[10px] sm:text-sm text-slate-600 dark:text-slate-500">
-                    <span class="text-walee-400 font-medium">Walee</span> · websolutions.work
-                </p>
-            </footer>
-        </div>
-    </div>
-    @include('partials.walee-support-button')
     
     <script>
         // Pull to refresh functionality

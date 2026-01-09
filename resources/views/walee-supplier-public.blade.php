@@ -235,6 +235,21 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Subscribe Section -->
+                    <div class="border-t border-slate-200 dark:border-slate-700 pt-6 mt-6">
+                        <div class="bg-gradient-to-r from-walee-400/10 to-walee-500/10 dark:from-walee-400/5 dark:to-walee-500/5 border border-walee-400/20 dark:border-walee-500/20 rounded-xl p-4 text-center">
+                            <p class="text-sm text-slate-700 dark:text-slate-300 mb-2">
+                                Subscribe for more features
+                            </p>
+                            <a href="https://websolutions.work/suscribe" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 bg-walee-500 hover:bg-walee-600 text-white font-medium rounded-lg transition-all shadow-sm hover:shadow-md active:scale-95">
+                                <span>Subscribe</span>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             @endif
         </div>

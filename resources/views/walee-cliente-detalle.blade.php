@@ -719,6 +719,16 @@
             
         <!-- Contenido principal -->
         <div class="relative max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 pb-6 flex flex-col">
+            <!-- Botón del extractor fuera de la sección, esquina superior derecha (desactivado) -->
+            <div class="absolute top-0 right-4 sm:right-6 z-30">
+                <span class="inline-flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg bg-gray-400/80 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg cursor-not-allowed opacity-60" title="Extractor desactivado">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                    </svg>
+                    <span class="text-sm sm:text-base font-medium">Extractor</span>
+                </span>
+            </div>
+            
             <!-- Header Profesional -->
             <div class="mb-3 sm:mb-4 lg:mb-6 flex flex-col w-full header-profesional-wrapper">
                 <div class="relative w-full bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none header-profesional-card">
@@ -749,15 +759,6 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                             </svg>
                         </button>
-                    </div>
-                    
-                    <!-- Botón del extractor arriba a la derecha de la sección (desactivado) -->
-                    <div class="absolute top-2 right-2 sm:top-3 sm:right-3 z-20">
-                        <span class="inline-flex items-center justify-center gap-1 px-1.5 py-1 rounded-md bg-gray-400/80 backdrop-blur-sm text-white border border-white/20 transition-all shadow cursor-not-allowed opacity-60" title="Extractor desactivado">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
-                            </svg>
-                        </span>
                     </div>
                     
                     <!-- Mobile: Layout reorganizado -->

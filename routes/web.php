@@ -6951,6 +6951,7 @@ Route::post('/walee-supplier/{id}/public/add-product', function (\Illuminate\Htt
             'tipo' => 'nullable|string|max:255',
             'descripcion' => 'nullable|string',
             'estado' => 'nullable|in:activo,inactivo',
+            'precio' => 'required|numeric|min:0',
             'stock' => 'nullable|integer|min:0',
             'imagen' => 'nullable|image|max:5120', // 5MB max
         ]);
@@ -6978,6 +6979,7 @@ Route::post('/walee-supplier/{id}/public/add-product', function (\Illuminate\Htt
             'nombre' => $request->input('nombre'),
             'categoria' => $request->input('tipo'),
             'descripcion' => $request->input('descripcion'),
+            'precio' => $request->input('precio', 0),
             'activo' => $request->input('estado') === 'activo',
             'stock' => $request->input('stock', 0),
             'cantidad' => $request->input('stock', 0),

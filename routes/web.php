@@ -6959,12 +6959,12 @@ Route::post('/walee-supplier/{id}/public/add-product', function (\Illuminate\Htt
         $imagenPath = null;
         if ($request->hasFile('imagen')) {
             // Asegurar que el directorio existe
-            $productosDir = storage_path('app/public/productos');
+            $productosDir = storage_path('app/public/productos-super');
             if (!file_exists($productosDir)) {
                 mkdir($productosDir, 0755, true);
             }
             
-            $path = $request->file('imagen')->store('productos', 'public');
+            $path = $request->file('imagen')->store('productos-super', 'public');
             $imagenPath = $path;
             
             // Asegurar permisos públicos

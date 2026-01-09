@@ -221,6 +221,9 @@
                                 <button onclick="openListOfProductsModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-lg font-medium transition-colors">
                                     List of Products
                                 </button>
+                                <button onclick="openAddProductModal()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium transition-colors">
+                                    Add Product
+                                </button>
                                 <button onclick="openEditProfileModal()" class="px-4 py-2 bg-walee-500 hover:bg-walee-600 text-white rounded-lg font-medium transition-colors">
                                     Edit
                                 </button>

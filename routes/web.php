@@ -6934,6 +6934,52 @@ Route::post('/walee-supplier/{id}/public/update', function (\Illuminate\Http\Req
     ]);
 })->name('walee.supplier.public.update');
 
+Route::post('/walee-supplier/{id}/public/add-product', function (\Illuminate\Http\Request $request, $id) {
+    // Check authentication
+    if (!$request->session()->has('supplier_public_authenticated_' . $id)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Not authenticated'
+        ], 401);
+    }
+    
+    $supplier = \App\Models\Client::findOrFail($id);
+    
+    try {
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'tipo' => 'nullable|string|max:255',
+            'descripcion' => 'nullable|string',
+            'estado' => 'nullable|in:activo,inactivo',
+        ]);
+        
+        $producto = \App\Models\Rproducto::create([
+            'cliente_id' => $supplier->id,
+            'nombre' => $request->input('nombre'),
+            'tipo' => $request->input('tipo'),
+            'descripcion' => $request->input('descripcion'),
+            'estado' => $request->input('estado', 'activo'),
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Product added successfully',
+            'product' => $producto
+        ]);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Validation error',
+            'errors' => $e->errors()
+        ], 422);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to add product: ' . $e->getMessage()
+        ], 500);
+    }
+})->name('walee.supplier.public.add-product');
+
 // Ruta para editar un cliente
 Route::get('/walee-supplier/{id}/editar', function ($id) {
     $cliente = \App\Models\Client::findOrFail($id);

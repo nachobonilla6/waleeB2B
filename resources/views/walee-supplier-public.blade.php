@@ -534,6 +534,14 @@
                 return;
             }
             
+            // Debug: verificar que todos los campos estén presentes
+            console.log('Producto encontrado:', producto);
+            console.log('Nombre:', producto.nombre);
+            console.log('Categoria:', producto.categoria);
+            console.log('Precio:', producto.precio);
+            console.log('Stock:', producto.stock);
+            console.log('Descripcion:', producto.descripcion);
+            
             // Asegurar que las fechas estén formateadas correctamente
             if (producto.fecha_expiracion && typeof producto.fecha_expiracion === 'string') {
                 producto.fecha_expiracion = producto.fecha_expiracion.split(' ')[0]; // Solo fecha, sin hora
@@ -610,6 +618,13 @@
         
         // Edit Product Modal
         function openEditProductModal(producto) {
+            // Debug: verificar datos recibidos
+            console.log('openEditProductModal - producto recibido:', producto);
+            console.log('Nombre:', producto.nombre);
+            console.log('Categoria:', producto.categoria);
+            console.log('Precio:', producto.precio);
+            console.log('Stock:', producto.stock);
+            
             // Preparar datos del producto igual que en edit profile
             const productData = {
                 id: producto.id || '',
@@ -625,6 +640,9 @@
                 fecha_limite_venta: (producto.fecha_limite_venta && producto.fecha_limite_venta !== null) ? producto.fecha_limite_venta : '',
                 imagen_url: producto.imagen_url || ''
             };
+            
+            // Debug: verificar productData preparado
+            console.log('productData preparado:', productData);
             
             const isDarkMode = document.documentElement.classList.contains('dark');
             const supplierId = @json($supplier->id);

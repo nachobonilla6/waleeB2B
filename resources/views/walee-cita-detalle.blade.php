@@ -66,6 +66,7 @@
         <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
             @php $pageTitle = 'Detalle de Cita'; @endphp
             @include('partials.walee-navbar')
+            @include('partials.walee-back-button')
             
             <!-- Header -->
             <div class="mb-6 animate-fade-in-up">

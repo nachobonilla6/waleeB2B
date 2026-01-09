@@ -90,6 +90,7 @@
         <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
             @php $pageTitle = 'Productos - ' . $cliente->name; @endphp
             @include('partials.walee-navbar')
+            @include('partials.walee-back-button')
             
             <!-- Cliente Info -->
             <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">

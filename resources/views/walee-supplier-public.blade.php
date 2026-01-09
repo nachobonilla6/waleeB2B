@@ -40,7 +40,8 @@
         // Obtener teléfono para WhatsApp
         $phone = $supplier->telefono_1 ?: $supplier->telefono_2 ?: $supplier->phone;
         $cleanPhone = $phone ? preg_replace('/[^0-9]/', '', $phone) : null;
-        $whatsappLink = $cleanPhone ? "https://wa.me/{$cleanPhone}" : null;
+        // Usar el formato de API oficial de WhatsApp, compatible con texto plano
+        $whatsappLink = $cleanPhone ? "https://api.whatsapp.com/send?phone={$cleanPhone}" : null;
         
         // Obtener foto
         $fotoPath = $supplier->foto ?? null;

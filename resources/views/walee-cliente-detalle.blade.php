@@ -783,366 +783,88 @@
                             <!-- Nombre y Info -->
                             <div class="flex-1 min-w-0">
                                 <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">{{ $cliente->name }}</h1>
-                                <div class="flex flex-col">
-                                    <span class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Status:</span>
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit mb-1.5">
-                                        <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
-                                        {{ $cliente->estado === 'accepted' ? 'Active' : ucfirst($cliente->estado) }}
-                                    </span>
-                            
-                            <!-- Is Active Toggle Mobile -->
-                            <div class="flex items-center gap-2 mb-1.5">
-                                <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Is Active:</span>
-                                <button 
-                                    onclick="toggleIsActive({{ $cliente->id }}, {{ ($cliente->is_active ?? false) ? 'true' : 'false' }})"
-                                    class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 {{ (($cliente->is_active ?? false)) ? 'bg-emerald-500 focus:ring-emerald-500' : 'bg-slate-300 dark:bg-slate-600 focus:ring-slate-500' }}"
-                                    title="{{ (($cliente->is_active ?? false)) ? 'Active' : 'Inactive' }}"
-                                >
-                                    <span class="inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform {{ (($cliente->is_active ?? false)) ? 'translate-x-5' : 'translate-x-0.5' }}"></span>
-                                </button>
-                                    <span class="text-xs font-medium {{ (($cliente->is_active ?? false)) ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400' }}">
-                                    {{ (($cliente->is_active ?? false)) ? 'Yes' : 'No' }}
-                                </span>
-                            </div>
-                            
-                            @if($cliente->horario)
-                                <div id="negocioEstadoMobile" class="mb-1.5">
-                                    <!-- Se actualizará con JavaScript -->
-                                </div>
-                            @endif
-                            @if($bandera || $pais)
-                                <div class="flex items-center gap-1.5">
-                                    @if($bandera)
-                                        <span class="text-base">{{ $bandera }}</span>
-                                    @endif
-                                    @if($pais)
-                                        <span class="text-xs text-slate-600 dark:text-slate-400">{{ $pais }}</span>
-                                    @endif
-                                </div>
-                            @endif
-                            @if($cliente->ciudad)
-                                <div class="flex items-center gap-1.5">
-                                    <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    </svg>
-                                    <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($cliente->ciudad) }}&zoom=6" target="_blank" rel="noopener noreferrer" class="text-xs text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors cursor-pointer">{{ $cliente->ciudad }}</a>
-                                </div>
-                            @endif
-                            @if($cliente->idioma)
-                                <div class="flex items-center gap-1.5">
-                                    <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
-                                    </svg>
-                                    <span class="text-xs text-slate-600 dark:text-slate-400">
-                                        @php
-                                            $idiomas = [
-                                                'es' => 'Español',
-                                                'en' => 'English',
-                                                'fr' => 'Français',
-                                                'de' => 'Deutsch',
-                                                'it' => 'Italiano',
-                                                'pt' => 'Português'
-                                            ];
-                                            echo $idiomas[$cliente->idioma] ?? strtoupper($cliente->idioma);
-                                        @endphp
-                                    </span>
-                                </div>
-                            @endif
-                            @if($cliente->industria)
-                                <div class="flex items-center gap-1.5">
-                                    <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                                    </svg>
-                                    <span class="text-xs text-slate-600 dark:text-slate-400">{{ $cliente->industria }}</span>
-                                </div>
-                            @endif
-                            @if($cliente->horario)
-                                <button onclick="showHorarioModal('{{ addslashes($cliente->horario) }}', '{{ $clientTimezone ?? '' }}', '{{ $systemTimezone }}')" id="horarioBtn" class="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs transition-colors border border-slate-200 dark:border-slate-700">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    <span>Schedule</span>
-                                    <span id="horarioEstado" class="ml-1"></span>
-                                </button>
-                            @endif
-                            
-                            <!-- Zona Horaria Widget Mobile -->
-                            @if($clientTimezone)
-                                <div class="mt-1.5 bg-violet-100 dark:bg-violet-500/20 border border-violet-200 dark:border-violet-500/30 rounded-lg px-2 py-1 flex items-center gap-1.5" title="Hora local del cliente{{ $cliente->ciudad ? ' - ' . $cliente->ciudad : '' }}">
-                                    <svg class="w-3 h-3 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    <span class="text-xs font-bold text-violet-600 dark:text-violet-400 client-time-mobile">{{ $clientTime ?? '--:--' }}</span>
-                                    <span class="text-[10px] text-violet-500 dark:text-violet-400 client-date-mobile">{{ $clientDate ?? '--' }}</span>
-                                </div>
-                            @endif
-                        </div>
-                </div>
-            </div>
-            
-                        <!-- Contacto de la empresa Mobile -->
-                        @if($cliente->contacto_empresa)
-                            <div class="px-3 pb-2">
-                                <div class="flex items-center gap-2 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-                                    <svg class="w-4 h-4 text-slate-500 dark:text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                    </svg>
-                                    <div class="flex-1 min-w-0">
-                                        <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Company Contact:</span>
-                                        <p class="text-sm font-semibold text-slate-900 dark:text-white truncate">{{ $cliente->contacto_empresa }}</p>
+                                
+                                @if($bandera || $pais)
+                                    <div class="flex items-center gap-1.5 mb-1">
+                                        @if($bandera)
+                                            <span class="text-lg">{{ $bandera }}</span>
+                                        @endif
+                                        @if($pais)
+                                            <span class="text-sm text-slate-600 dark:text-slate-400">{{ $pais }}</span>
+                                        @endif
                                     </div>
-                                </div>
+                                @endif
+                                
+                                @if($cliente->ciudad)
+                                    <div class="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-400">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        </svg>
+                                        <span>{{ $cliente->ciudad }}</span>
+                                    </div>
+                                @endif
                             </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Status and Active Toggle -->
+                    <div class="flex flex-wrap items-center gap-3 mb-4">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30">
+                            <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                            {{ $cliente->estado === 'accepted' ? 'Active' : ucfirst($cliente->estado) }}
+                        </span>
+                        
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">Is Active:</span>
+                            <button 
+                                onclick="toggleIsActive({{ $cliente->id }}, {{ ($cliente->is_active ?? false) ? 'true' : 'false' }})"
+                                class="relative inline-flex h-5 w-9 sm:h-6 sm:w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 {{ (($cliente->is_active ?? false)) ? 'bg-emerald-500 focus:ring-emerald-500' : 'bg-slate-300 dark:bg-slate-600 focus:ring-slate-500' }}"
+                                title="{{ (($cliente->is_active ?? false)) ? 'Active' : 'Inactive' }}"
+                            >
+                                <span class="inline-block h-3.5 w-3.5 sm:h-4 sm:w-4 transform rounded-full bg-white transition-transform {{ (($cliente->is_active ?? false)) ? 'translate-x-5 sm:translate-x-6' : 'translate-x-0.5 sm:translate-x-1' }}"></span>
+                            </button>
+                            <span class="text-xs sm:text-sm font-medium {{ (($cliente->is_active ?? false)) ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400' }}">
+                                {{ (($cliente->is_active ?? false)) ? 'Yes' : 'No' }}
+                            </span>
+                        </div>
+                        
+                        @if($cliente->horario)
+                            <button onclick="showHorarioModal('{{ addslashes($cliente->horario) }}', '{{ $clientTimezone ?? '' }}', '{{ $systemTimezone }}')" id="horarioBtn" class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs transition-colors border border-slate-200 dark:border-slate-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span>Schedule</span>
+                                <span id="horarioEstado" class="ml-1"></span>
+                            </button>
                         @endif
                         
-                        <!-- Acciones Rápidas Mobile -->
-                        <div class="px-3 pb-3">
-                            <div class="grid grid-cols-4 gap-1.5">
-                                <!-- Note Button -->
-                                <button onclick="openNotaModal()" class="flex items-center justify-center p-2 rounded-lg bg-violet-100 dark:bg-violet-500/20 hover:bg-violet-200 dark:hover:bg-violet-500/30 text-violet-600 dark:text-violet-400 border border-violet-600 dark:border-violet-500/30 transition-all group shadow-sm" title="Note">
-                                    <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                    </svg>
-                                </button>
-            
-                                <!-- Email Button -->
-                                <button type="button" onclick="(function(){ console.log('=== DEBUG: Click en botón de email (mobile) ==='); console.log('window.openEmailModal:', typeof window.openEmailModal); console.log('window keys con Email:', Object.keys(window).filter(k => k.toLowerCase().includes('email'))); console.log('window keys con Modal:', Object.keys(window).filter(k => k.toLowerCase().includes('modal'))); console.log('window keys con Phase:', Object.keys(window).filter(k => k.toLowerCase().includes('phase'))); try { if(typeof window.openEmailModal === 'function') { console.log('✓ Llamando a window.openEmailModal()'); window.openEmailModal(); } else { console.error('✗ ERROR: window.openEmailModal no es una función'); console.error('Tipo:', typeof window.openEmailModal); console.error('Valor:', window.openEmailModal); console.error('Todas las keys de window:', Object.keys(window).slice(0, 50)); alert('Error: La función de email no está disponible.\n\nTipo: ' + typeof window.openEmailModal + '\n\nRevisa la consola para más detalles.'); } } catch(e) { console.error('✗ EXCEPCIÓN al ejecutar:', e); console.error('Stack:', e.stack); alert('Error: ' + e.message + '\n\nRevisa la consola para más detalles.'); } })();" class="flex items-center justify-center p-2 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-walee-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm">
-                                    <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-amber-600 dark:text-walee-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        @if($clientTimezone)
+                            <div class="bg-violet-100 dark:bg-violet-500/20 border border-violet-200 dark:border-violet-500/30 rounded-lg px-2 py-1 flex items-center gap-1.5" title="Hora local del cliente{{ $cliente->ciudad ? ' - ' . $cliente->ciudad : '' }}">
+                                <svg class="w-3 h-3 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
-                                </button>
-                                
-                                <!-- Facebook Button -->
-                                @if($cliente->facebook)
-                                    <a href="{{ $cliente->facebook }}" target="_blank" class="flex items-center justify-center p-2 rounded-lg bg-violet-100 dark:bg-slate-800 hover:bg-violet-200 dark:hover:bg-slate-700 text-violet-600 dark:text-violet-600 border border-violet-600 dark:border-slate-700 transition-all group shadow-sm">
-                                        <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-violet-600 dark:text-violet-700" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                    </svg>
-                                    </a>
-                                @else
-                                    <div class="flex items-center justify-center p-2 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed" title="Agregue un link de Facebook para activar">
-                                        <svg class="w-5 h-5 flex-shrink-0 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                </svg>
-            </div>
-                                @endif
-                
-                                <!-- WhatsApp Button -->
-                                <button onclick="openWhatsAppModal()" 
-                                        class="flex items-center justify-center p-2 rounded-lg bg-emerald-100 dark:bg-slate-800 hover:bg-emerald-200 dark:hover:bg-slate-700 text-emerald-600 dark:text-emerald-600 border border-emerald-600 dark:border-slate-700 transition-all group shadow-sm {{ !$whatsappLink ? 'opacity-60 cursor-not-allowed' : '' }}"
-                                        {{ !$whatsappLink ? 'disabled' : '' }}>
-                                    <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-emerald-600 dark:text-emerald-700" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                                </svg>
-                                </button>
+                                <span class="text-xs font-bold text-violet-600 dark:text-violet-400 client-time">{{ $clientTime ?? '--:--' }}</span>
+                                <span class="text-[10px] text-violet-500 dark:text-violet-400 client-date">{{ $clientDate ?? '--' }}</span>
                             </div>
-                            </div>
-                        
-                        <!-- Alertas/Información -->
-                        <div class="px-3 pb-3 space-y-1.5">
-                            @php
-                                $totalPublicaciones = $publicacionesProgramadas + $publicacionesPublicadas;
-                                $totalCitas = $citasPendientes->count() + $citasPasadas->count();
-                            @endphp
-                            
-                            
-                            <!-- Appointments -->
-                            <a href="{{ route('walee.calendario', ['cliente_id' => $cliente->id]) }}" class="flex items-center justify-between p-2.5 rounded-lg bg-amber-100 dark:bg-walee-500/10 border border-amber-600 dark:border-walee-500/20 hover:bg-amber-200 dark:hover:bg-walee-500/20 transition-colors cursor-pointer">
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-amber-600 dark:text-walee-400" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5v-5z"/>
-                            </svg>
-                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Appointments</span>
-                        </div>
-                                <span class="text-sm font-semibold text-amber-700 dark:text-walee-400">{{ $totalCitas }}</span>
-                            </a>
-                            
-                            <!-- Invoices -->
-                            <a href="{{ route('walee.facturas.crear') }}?cliente_id={{ $cliente->id }}" class="flex items-center justify-between p-2.5 rounded-lg bg-red-100 dark:bg-red-500/10 border border-red-600 dark:border-red-500/20 hover:bg-red-200 dark:hover:bg-red-500/20 transition-colors cursor-pointer">
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                </svg>
-                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Invoices</span>
-                            </div>
-                                <span class="text-sm font-semibold text-red-700 dark:text-red-400">{{ $facturas->count() }}</span>
-                            </a>
-                
-                            <!-- Quotes -->
-                            <a href="{{ route('walee.cotizaciones.crear') }}?cliente_id={{ $cliente->id }}" class="flex items-center justify-between p-2.5 rounded-lg bg-blue-100 dark:bg-blue-500/10 border border-blue-600 dark:border-blue-500/20 hover:bg-blue-200 dark:hover:bg-blue-500/20 transition-colors cursor-pointer">
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                    </svg>
-                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Quotes</span>
-                                </div>
-                                <span class="text-sm font-semibold text-blue-700 dark:text-blue-400">{{ $cotizaciones->count() }}</span>
-                            </a>
-                
-                            <!-- Contratos -->
-                            <a href="{{ route('walee.contratos.cliente', $cliente->id) }}" class="flex items-center justify-between p-2.5 rounded-lg bg-walee-100 dark:bg-walee-500/10 border border-walee-600 dark:border-walee-500/20 hover:bg-walee-200 dark:hover:bg-walee-500/20 transition-colors cursor-pointer">
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                </svg>
-                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Contracts</span>
-                            </div>
-                                <span class="text-sm font-semibold text-walee-700 dark:text-walee-400">{{ $contratos->count() }}</span>
-                            </a>
-                            
-                            <!-- Productos -->
-                            <a href="{{ route('walee.productos.cliente', $cliente->id) }}" class="flex items-center justify-between p-2.5 rounded-lg bg-purple-100 dark:bg-purple-500/10 border border-purple-600 dark:border-purple-500/20 hover:bg-purple-200 dark:hover:bg-purple-500/20 transition-colors cursor-pointer">
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                                    </svg>
-                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Products</span>
-                                </div>
-                                <span class="text-sm font-semibold text-purple-700 dark:text-purple-400">{{ $productos->count() ?? 0 }}</span>
-                            </a>
-                            
-                            <!-- Emails Enviados -->
-                            <a href="{{ route('walee.emails.enviados') }}?cliente_id={{ $cliente->id }}" class="flex items-center justify-between p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors cursor-pointer">
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                    </svg>
-                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Emails Enviados</span>
-                                </div>
-                                <span class="text-sm font-semibold text-emerald-700 dark:text-emerald-400">{{ $emailsEnviados ?? 0 }}</span>
-                            </a>
-                        </div>
+                        @endif
                     </div>
-                
-                    <!-- Desktop: Layout original -->
-                    <div class="hidden sm:block p-4 sm:p-6 lg:p-8">
-                        <div class="flex flex-col gap-4 lg:gap-6">
-                            <!-- Header con imagen y nombre -->
-                            <div class="flex items-start gap-3 sm:gap-4 lg:gap-6">
-                                <!-- Imagen -->
-                                @if($fotoUrl)
-                                    <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-20 h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl object-cover border-3 border-emerald-500/30 flex-shrink-0 shadow-md">
-                        @else
-                                    <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-20 h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl object-cover border-3 border-emerald-500/30 flex-shrink-0 shadow-md opacity-80">
-                @endif
-                
-                                <!-- Nombre y estado a la derecha -->
-                        <div class="flex-1 min-w-0">
-                                    <h1 class="text-2xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2 sm:mb-3 truncate">{{ $cliente->name }}</h1>
-                                    <div class="flex flex-col">
-                                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Status:</span>
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit mb-2">
-                                            <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
-                                            {{ $cliente->estado === 'accepted' ? 'Active' : ucfirst($cliente->estado) }}
-                                        </span>
-                                    
-                                    <!-- Is Active Toggle Desktop -->
-                                    <div class="flex items-center gap-2 mb-2">
-                                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Is Active:</span>
-                                        <button 
-                                            onclick="toggleIsActive({{ $cliente->id }}, {{ ($cliente->is_active ?? false) ? 'true' : 'false' }})"
-                                            class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 {{ (($cliente->is_active ?? false)) ? 'bg-emerald-500 focus:ring-emerald-500' : 'bg-slate-300 dark:bg-slate-600 focus:ring-slate-500' }}"
-                                            title="{{ (($cliente->is_active ?? false)) ? 'Active' : 'Inactive' }}"
-                                        >
-                                            <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform {{ (($cliente->is_active ?? false)) ? 'translate-x-6' : 'translate-x-1' }}"></span>
-                                        </button>
-                                        <span class="text-sm font-medium {{ (($cliente->is_active ?? false)) ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400' }}">
-                                            {{ (($cliente->is_active ?? false)) ? 'Yes' : 'No' }}
-                                        </span>
-                                    </div>
-                                    
-                            @if($cliente->horario)
-                                <div id="negocioEstadoDesktop" class="mb-2">
-                                    <!-- Se actualizará con JavaScript -->
+                    
+                    <!-- Company Contact -->
+                    @if($cliente->contacto_empresa)
+                        <div class="mb-4">
+                            <div class="flex items-center gap-2.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                                <svg class="w-5 h-5 text-slate-500 dark:text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                                <div class="flex-1 min-w-0">
+                                    <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Company Contact:</span>
+                                    <p class="text-sm font-semibold text-slate-900 dark:text-white truncate">{{ $cliente->contacto_empresa }}</p>
                                 </div>
-                            @endif
-                            @if($bandera || $pais)
-                                <div class="flex items-center gap-1.5">
-                                    @if($bandera)
-                                        <span class="text-lg">{{ $bandera }}</span>
-                                    @endif
-                                    @if($pais)
-                                        <span class="text-sm text-slate-600 dark:text-slate-400">{{ $pais }}</span>
-                                    @endif
-                                </div>
-                            @endif
-                            @if($cliente->ciudad)
-                                <div class="flex items-center gap-1.5">
-                                    <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    </svg>
-                                    <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($cliente->ciudad) }}&zoom=6" target="_blank" rel="noopener noreferrer" class="text-sm text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors cursor-pointer">{{ $cliente->ciudad }}</a>
                             </div>
-                            @endif
-                            @if($cliente->idioma)
-                                <div class="flex items-center gap-1.5">
-                                    <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
-                                    </svg>
-                                    <span class="text-sm text-slate-600 dark:text-slate-400">
-                                        @php
-                                            $idiomas = [
-                                                'es' => 'Español',
-                                                'en' => 'English',
-                                                'fr' => 'Français',
-                                                'de' => 'Deutsch',
-                                                'it' => 'Italiano',
-                                                'pt' => 'Português'
-                                            ];
-                                            echo $idiomas[$cliente->idioma] ?? strtoupper($cliente->idioma);
-                                        @endphp
-                                    </span>
-                                </div>
-                            @endif
-                            @if($cliente->industria)
-                                <div class="flex items-center gap-1.5">
-                                    <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                                    </svg>
-                                    <span class="text-sm text-slate-600 dark:text-slate-400">{{ $cliente->industria }}</span>
-                                </div>
-                            @endif
-                            @if($cliente->horario)
-                                <button onclick="showHorarioModal('{{ addslashes($cliente->horario) }}', '{{ $clientTimezone ?? '' }}', '{{ $systemTimezone }}')" id="horarioBtnDesktop" class="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs transition-colors border border-slate-200 dark:border-slate-700">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    <span>Schedule</span>
-                                    <span id="horarioEstadoDesktop" class="ml-1"></span>
-                                </button>
-                            @endif
-                            
-                            <!-- Zona Horaria Widget Desktop -->
-                            @if($clientTimezone)
-                                <div class="mt-2 bg-violet-100 dark:bg-violet-500/20 border border-violet-200 dark:border-violet-500/30 rounded-lg px-2.5 py-1.5 flex items-center gap-1.5" title="Hora local del cliente{{ $cliente->ciudad ? ' - ' . $cliente->ciudad : '' }}">
-                                    <svg class="w-3.5 h-3.5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    <span class="text-xs font-bold text-violet-600 dark:text-violet-400 client-time-desktop">{{ $clientTime ?? '--:--' }}</span>
-                                    <span class="text-[10px] text-violet-500 dark:text-violet-400 client-date-desktop">{{ $clientDate ?? '--' }}</span>
-                                </div>
-                            @endif
                         </div>
-                    </div>
-                </div>
-                
-                            <!-- Contacto de la empresa Desktop -->
-                            @if($cliente->contacto_empresa)
-                                <div class="mb-3">
-                                    <div class="flex items-center gap-2.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-                                        <svg class="w-5 h-5 text-slate-500 dark:text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                        </svg>
-                                        <div class="flex-1 min-w-0">
-                                            <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Company Contact:</span>
-                                            <p class="text-sm font-semibold text-slate-900 dark:text-white truncate">{{ $cliente->contacto_empresa }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                            
+                    @endif
+                    
                     <!-- Quick Actions -->
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
                         <!-- Note Button -->
@@ -1196,83 +918,144 @@
                             </div>
                         @endif
                     </div>
-            
-                            <!-- Alertas Desktop -->
-                            <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3">
-                                @php
-                                    $totalPublicaciones = $publicacionesProgramadas + $publicacionesPublicadas;
-                                    $totalCitas = $citasPendientes->count() + $citasPasadas->count();
-                                @endphp
-                                
-                                
-                                <!-- Appointments -->
-                                <a href="{{ route('walee.calendario', ['cliente_id' => $cliente->id]) }}" class="flex items-center justify-between p-3 rounded-xl bg-walee-500/10 border border-walee-500/20 hover:bg-walee-500/20 transition-colors cursor-pointer">
-                                    <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-amber-600 dark:text-walee-400" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5v-5z"/>
-                                                </svg>
-                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Appointments</span>
-                                            </div>
-                                    <span class="text-sm font-semibold text-amber-700 dark:text-walee-400">{{ $totalCitas }}</span>
-                    </a>
                     
-                                <!-- Invoices -->
-                                <a href="{{ route('walee.facturas.crear') }}?cliente_id={{ $cliente->id }}" class="flex items-center justify-between p-3 rounded-xl bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-colors cursor-pointer">
-                                    <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    <!-- Statistics -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-2 mb-4">
+                        @php
+                            $totalCitas = $citasPendientes->count() + $citasPasadas->count();
+                        @endphp
+                        
+                        <!-- Appointments -->
+                        <a href="{{ route('walee.calendario', ['cliente_id' => $cliente->id]) }}" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-yellow-100 dark:hover:bg-yellow-500/20 text-slate-500 dark:text-slate-400 hover:text-yellow-600 dark:hover:text-yellow-400 border border-slate-300 dark:border-slate-700 hover:border-yellow-300 dark:hover:border-yellow-500/30 transition-all shadow-sm cursor-pointer">
+                            <span class="text-xs font-medium">Appointments</span>
+                            <span class="text-sm font-bold">{{ $totalCitas }}</span>
+                        </a>
+                        
+                        <!-- Invoices -->
+                        <a href="{{ route('walee.facturas.crear') }}?cliente_id={{ $cliente->id }}" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-red-100 dark:hover:bg-red-500/20 text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 border border-slate-300 dark:border-slate-700 hover:border-red-300 dark:hover:border-red-500/30 transition-all shadow-sm cursor-pointer">
+                            <span class="text-xs font-medium">Invoices</span>
+                            <span class="text-sm font-bold">{{ $facturas->count() }}</span>
+                        </a>
+                        
+                        <!-- Quotes -->
+                        <a href="{{ route('walee.cotizaciones.crear') }}?cliente_id={{ $cliente->id }}" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-blue-100 dark:hover:bg-blue-500/20 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 border border-slate-300 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500/30 transition-all shadow-sm cursor-pointer">
+                            <span class="text-xs font-medium">Quotes</span>
+                            <span class="text-sm font-bold">{{ $cotizaciones->count() }}</span>
+                        </a>
+                        
+                        <!-- Contracts -->
+                        <a href="{{ route('walee.contratos.cliente', $cliente->id) }}" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-orange-100 dark:hover:bg-orange-500/20 text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 border border-slate-300 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-500/30 transition-all shadow-sm cursor-pointer">
+                            <span class="text-xs font-medium">Contracts</span>
+                            <span class="text-sm font-bold">{{ $contratos->count() }}</span>
+                        </a>
+                        
+                        <!-- Products -->
+                        <a href="{{ route('walee.productos.cliente', $cliente->id) }}" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-violet-100 dark:bg-violet-500/20 hover:bg-violet-200 dark:hover:bg-violet-500/30 text-violet-700 dark:text-violet-400 border border-violet-300 dark:border-violet-500/30 transition-all shadow-sm cursor-pointer">
+                            <span class="text-xs font-medium">Products</span>
+                            <span class="text-sm font-bold">{{ $productos->count() ?? 0 }}</span>
+                        </a>
+                        
+                        <!-- Emails Enviados -->
+                        <a href="{{ route('walee.emails.enviados') }}?cliente_id={{ $cliente->id }}" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-300 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-500/30 transition-all shadow-sm cursor-pointer">
+                            <span class="text-xs font-medium">Emails Enviados</span>
+                            <span class="text-sm font-bold">{{ $emailsEnviados ?? 0 }}</span>
+                        </a>
+                    </div>
+                    
+                    <!-- Additional Info -->
+                    <div class="border-t border-slate-200 dark:border-slate-700 pt-4 space-y-3">
+                        @if($cliente->idioma)
+                            <div class="flex items-center gap-2 text-sm">
+                                <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
                                 </svg>
-                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Invoices</span>
+                                <span class="text-slate-600 dark:text-slate-400">
+                                    @php
+                                        $idiomas = [
+                                            'es' => 'Español',
+                                            'en' => 'English',
+                                            'fr' => 'Français',
+                                            'de' => 'Deutsch',
+                                            'it' => 'Italiano',
+                                            'pt' => 'Português'
+                                        ];
+                                        echo $idiomas[$cliente->idioma] ?? strtoupper($cliente->idioma);
+                                    @endphp
+                                </span>
                             </div>
-                                    <span class="text-sm font-semibold text-red-700 dark:text-red-400">{{ $facturas->count() }}</span>
-                    </a>
-                    
-                                <!-- Quotes -->
-                                <a href="{{ route('walee.cotizaciones.crear') }}?cliente_id={{ $cliente->id }}" class="block w-full flex items-center justify-between p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-colors cursor-pointer">
-                                    <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                                </svg>
-                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Quotes</span>
-                                            </div>
-                                    <span class="text-sm font-semibold text-blue-700 dark:text-blue-400">{{ $cotizaciones->count() }}</span>
-                    </a>
-                    
-                                <!-- Contratos -->
-                                <a href="{{ route('walee.contratos.cliente', $cliente->id) }}" class="flex items-center justify-between p-3 rounded-xl bg-walee-500/10 border border-walee-500/20 hover:bg-walee-500/20 transition-colors cursor-pointer">
-                                    <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                                </svg>
-                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Contracts</span>
-                                            </div>
-                                    <span class="text-sm font-semibold text-walee-700 dark:text-walee-400">{{ $contratos->count() }}</span>
-                                            </a>
-                                            
-                                <!-- Productos -->
-                                <a href="{{ route('walee.productos.cliente', $cliente->id) }}" class="flex items-center justify-between p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 transition-colors cursor-pointer">
-                                    <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                                        </svg>
-                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Products</span>
-                                    </div>
-                                    <span class="text-sm font-semibold text-purple-700 dark:text-purple-400">{{ $productos->count() ?? 0 }}</span>
-                                </a>
-                                
-                                <!-- Emails Enviados -->
-                                <a href="{{ route('walee.emails.enviados') }}?cliente_id={{ $cliente->id }}" class="flex items-center justify-between p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors cursor-pointer">
-                                    <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                        </svg>
-                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Emails Enviados</span>
-                                    </div>
-                                    <span class="text-sm font-semibold text-emerald-700 dark:text-emerald-400">{{ $emailsEnviados ?? 0 }}</span>
-                                </a>
-                                        </div>
-                                        </div>
-                                    </div>
+                        @endif
+                        
+                        @if($cliente->industria)
+                            <div class="flex items-center gap-2 text-sm">
+                                <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                </svg>
+                                <span class="text-slate-600 dark:text-slate-400">{{ $cliente->industria }}</span>
+                            </div>
+                        @endif
+                        
+                        @if($cliente->horario)
+                            <div id="negocioEstado" class="mb-2">
+                                <!-- Se actualizará con JavaScript -->
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                        <!-- Note Button -->
+                        <button onclick="openNotaModal()" class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-violet-100 dark:bg-violet-500/20 hover:bg-violet-200 dark:hover:bg-violet-500/30 text-violet-600 dark:text-violet-400 border border-violet-600 dark:border-violet-500/30 transition-all group shadow-sm">
+                            <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <span class="text-sm font-semibold">Note</span>
+                        </button>
+        
+                        <!-- Email Button -->
+                        <button onclick="openEmailModal()" class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-amber-100 dark:bg-amber-500/20 hover:bg-amber-200 dark:hover:bg-amber-500/30 text-amber-600 dark:text-amber-400 border border-amber-600 dark:border-amber-500/30 transition-all group shadow-sm">
+                            <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            <span class="text-sm font-semibold">Email</span>
+                        </button>
+                        
+                        <!-- Facebook Button -->
+                        @if($cliente->facebook)
+                            <a href="{{ $cliente->facebook }}" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-violet-100 dark:bg-violet-500/20 hover:bg-violet-200 dark:hover:bg-violet-500/30 text-violet-600 dark:text-violet-400 border border-violet-600 dark:border-violet-500/30 transition-all group shadow-sm">
+                                <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                </svg>
+                                <span class="text-sm font-semibold">Facebook</span>
+                            </a>
+                        @else
+                            <div class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed">
+                                <svg class="w-6 h-6 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                </svg>
+                                <span class="text-sm font-semibold text-slate-400">Facebook</span>
+                            </div>
+                        @endif
+        
+                        <!-- WhatsApp Button -->
+                        @if($whatsappLink)
+                            <button onclick="openWhatsAppModal()" 
+                                    class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-emerald-100 dark:bg-emerald-500/20 hover:bg-emerald-200 dark:hover:bg-emerald-500/30 text-emerald-600 dark:text-emerald-400 border border-emerald-600 dark:border-emerald-500/30 transition-all group shadow-sm">
+                                <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                                </svg>
+                                <span class="text-sm font-semibold">WhatsApp</span>
+                            </button>
+                        @else
+                            <div class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed">
+                                <svg class="w-6 h-6 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                                </svg>
+                                <span class="text-sm font-semibold text-slate-400">WhatsApp</span>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
             
@@ -3634,12 +3417,8 @@
             const clientTimezone = '{{ $clientTimezone }}';
             
             // Update mobile clock
-            const mobileTimeElement = document.querySelector('.client-time-mobile');
-            const mobileDateElement = document.querySelector('.client-date-mobile');
-            
-            // Update desktop clock
-            const desktopTimeElement = document.querySelector('.client-time-desktop');
-            const desktopDateElement = document.querySelector('.client-date-desktop');
+            const timeElement = document.querySelector('.client-time');
+            const dateElement = document.querySelector('.client-date');
             
             if (clientTimezone) {
                 try {
@@ -3663,10 +3442,8 @@
                     const minutes = timeParts.find(part => part.type === 'minute').value;
                     const date = dateFormatter.format(now);
                     
-                    if (mobileTimeElement) mobileTimeElement.textContent = `${hours}:${minutes}`;
-                    if (mobileDateElement) mobileDateElement.textContent = date;
-                    if (desktopTimeElement) desktopTimeElement.textContent = `${hours}:${minutes}`;
-                    if (desktopDateElement) desktopDateElement.textContent = date;
+                    if (timeElement) timeElement.textContent = `${hours}:${minutes}`;
+                    if (dateElement) dateElement.textContent = date;
                 } catch (error) {
                     console.error('Error updating client clock:', error);
                 }

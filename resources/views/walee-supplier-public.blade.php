@@ -534,6 +534,20 @@
                 return;
             }
             
+            // Asegurar que las fechas estén formateadas correctamente
+            if (producto.fecha_expiracion && typeof producto.fecha_expiracion === 'string') {
+                producto.fecha_expiracion = producto.fecha_expiracion.split(' ')[0]; // Solo fecha, sin hora
+            }
+            if (producto.fecha_entrada && typeof producto.fecha_entrada === 'string') {
+                producto.fecha_entrada = producto.fecha_entrada.split(' ')[0];
+            }
+            if (producto.dlc && typeof producto.dlc === 'string') {
+                producto.dlc = producto.dlc.split(' ')[0];
+            }
+            if (producto.fecha_limite_venta && typeof producto.fecha_limite_venta === 'string') {
+                producto.fecha_limite_venta = producto.fecha_limite_venta.split(' ')[0];
+            }
+            
             openEditProductModal(producto);
         }
         

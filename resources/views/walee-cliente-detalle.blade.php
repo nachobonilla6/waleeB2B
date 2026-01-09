@@ -1041,7 +1041,7 @@
                                             <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform {{ (($cliente->is_active ?? false)) ? 'translate-x-6' : 'translate-x-1' }}"></span>
                                         </button>
                                         <span class="text-sm font-medium {{ (($cliente->is_active ?? false)) ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400' }}">
-                                            {{ (($cliente->is_active ?? false)) ? 'Sí' : 'No' }}
+                                            {{ (($cliente->is_active ?? false)) ? 'Yes' : 'No' }}
                                         </span>
                                     </div>
                                     

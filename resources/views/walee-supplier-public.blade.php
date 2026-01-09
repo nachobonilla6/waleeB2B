@@ -643,22 +643,21 @@
                                       class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">${producto.descripcion || ''}</textarea>
                         </div>
                         ${imagenUrl ? `
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Current Image</label>
-                            <img src="${imagenUrl}" alt="Current" class="w-20 h-20 object-cover rounded-lg border border-slate-300 dark:border-slate-600">
+                        <div class="flex items-center gap-2">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Current:</label>
+                            <img src="${imagenUrl}" alt="Current" class="w-12 h-12 object-cover rounded border border-slate-300 dark:border-slate-600">
                         </div>
                         ` : ''}
                         <div>
-                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Change Image</label>
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Image</label>
                             <input type="file" id="editProductImage" name="imagen" accept="image/*"
                                    class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Optional: Upload new product image</p>
                         </div>
                     </form>
                 `,
                 width: '500px',
                 padding: '1rem',
-                maxHeight: '600px',
+                maxHeight: '500px',
                 showCancelButton: true,
                 confirmButtonText: 'Save',
                 cancelButtonText: 'Cancel',

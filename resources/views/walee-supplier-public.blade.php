@@ -930,22 +930,56 @@
             
             const whatsappLink = @json($whatsappLink);
             const supplierName = @json($supplier->name ?? 'Supplier');
+            const productos = @json($productos);
             const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            // Filter only active products
+            const activeProducts = productos.filter(p => p.activo);
+            
+            let productsHtml = '';
+            if (activeProducts.length > 0) {
+                productsHtml = `
+                    <div class="mb-3">
+                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Include Products List:</label>
+                        <div class="max-h-32 overflow-y-auto border border-slate-300 dark:border-slate-600 rounded-lg p-2 space-y-1.5">
+                            ${activeProducts.map((producto, index) => `
+                                <label class="flex items-center gap-2 p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded cursor-pointer">
+                                    <input type="checkbox" class="product-checkbox" data-product-id="${producto.id}" 
+                                           data-product-name="${producto.nombre || 'Unnamed'}" 
+                                           data-product-stock="${producto.stock || 0}" 
+                                           data-product-price="${producto.precio || 0}"
+                                           class="rounded border-slate-300 dark:border-slate-600 text-emerald-500 focus:ring-emerald-500">
+                                    <div class="flex-1 text-xs">
+                                        <span class="font-medium text-slate-900 dark:text-white">${producto.nombre || 'Unnamed Product'}</span>
+                                        <span class="text-slate-600 dark:text-slate-400 ml-2">Stock: ${producto.stock || 0}</span>
+                                        ${producto.precio ? `<span class="text-slate-600 dark:text-slate-400 ml-2">$${parseFloat(producto.precio).toFixed(2)}</span>` : ''}
+                                    </div>
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
             
             Swal.fire({
                 title: 'Send WhatsApp Message',
                 html: `
-                    <div class="space-y-4 text-left">
+                    <div class="space-y-3 text-left">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Message to ${supplierName}</label>
-                            <textarea id="whatsappMessage" rows="6" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Type your message..."></textarea>
+                            <textarea id="whatsappMessage" rows="4" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Type your message..."></textarea>
                         </div>
+                        ${productsHtml}
                     </div>
                 `,
+                width: '500px',
+                padding: '1rem',
                 showCancelButton: true,
                 confirmButtonText: 'Send',
                 cancelButtonText: 'Cancel',
                 confirmButtonColor: '#10b981',
+                cancelButtonColor: '#6b7280',
+                reverseButtons: true,
                 customClass: {
                     popup: isDarkMode ? 'dark-swal' : 'light-swal',
                     htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html'
@@ -958,7 +992,36 @@
                     }
                 },
                 preConfirm: () => {
-                    return document.getElementById('whatsappMessage').value;
+                    const message = document.getElementById('whatsappMessage').value;
+                    const selectedProducts = [];
+                    
+                    // Get selected products
+                    document.querySelectorAll('.product-checkbox:checked').forEach(checkbox => {
+                        selectedProducts.push({
+                            name: checkbox.getAttribute('data-product-name'),
+                            stock: checkbox.getAttribute('data-product-stock'),
+                            price: checkbox.getAttribute('data-product-price')
+                        });
+                    });
+                    
+                    // Build final message
+                    let finalMessage = message;
+                    
+                    if (selectedProducts.length > 0) {
+                        finalMessage += '\n\n📦 *Available Products:*\n';
+                        selectedProducts.forEach((product, index) => {
+                            finalMessage += `${index + 1}. ${product.name}`;
+                            if (product.stock && parseInt(product.stock) > 0) {
+                                finalMessage += ` (Stock: ${product.stock})`;
+                            }
+                            if (product.price && parseFloat(product.price) > 0) {
+                                finalMessage += ` - $${parseFloat(product.price).toFixed(2)}`;
+                            }
+                            finalMessage += '\n';
+                        });
+                    }
+                    
+                    return finalMessage;
                 }
             }).then((result) => {
                 if (result.isConfirmed && result.value) {

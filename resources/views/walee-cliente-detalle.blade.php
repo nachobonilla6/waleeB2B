@@ -3339,7 +3339,7 @@
                 width: isMobile ? '90%' : '550px',
                 padding: isMobile ? '1rem' : '1.5rem',
                 showConfirmButton: true,
-                confirmButtonText: 'Volver',
+                confirmButtonText: 'Back',
                 confirmButtonColor: '#10b981',
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',

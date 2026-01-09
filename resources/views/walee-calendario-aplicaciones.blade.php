@@ -384,8 +384,8 @@
                                 <svg class="w-4 h-4 sm:w-5 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                                 </svg>
-                                <span class="hidden sm:inline">Volver</span>
-                                <span class="sm:hidden">Volver</span>
+                                <span class="hidden sm:inline">Back</span>
+                                <span class="sm:hidden">Back</span>
                             </a>
                             @if(!$isAuthorized)
                                 <a href="{{ route('google-calendar.auth') }}" class="px-3 py-2 sm:px-4 sm:py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:shadow-lg active:scale-95">

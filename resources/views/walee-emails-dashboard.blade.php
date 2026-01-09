@@ -239,7 +239,7 @@
                         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
-                        <span class="hidden sm:inline">Volver</span>
+                        <span class="hidden sm:inline">Back</span>
                     </a>
                     <a href="{{ route('walee.emails.enviados') }}" class="flex-1 sm:flex-none px-3 py-2.5 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2 text-sm shadow-sm hover:shadow active:scale-95">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

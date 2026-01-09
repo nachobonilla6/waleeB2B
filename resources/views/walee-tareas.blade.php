@@ -617,7 +617,7 @@
                 <div id="vista-tareas-lista" class="hidden">
                     <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm dark:shadow-none">
                         <div class="flex items-center gap-3 mb-4">
-                            <button onclick="volverAListas()" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" title="Volver a listas">
+                            <button onclick="volverAListas()" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" title="Back to lists">
                                 <svg class="w-5 h-5 text-violet-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                 </svg>

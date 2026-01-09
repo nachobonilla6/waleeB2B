@@ -266,17 +266,70 @@
         // Limitar a los primeros 10
         $clientesConPublicaciones = array_slice($clientesConPublicaciones, 0, 10);
         
-        // Datos para gráfico de últimos 15 días (solo activos)
-        $ultimos7Dias = [];
-        $clientesPorDia = [];
+        // Análisis ABC de Proveedores (Pareto)
+        // Agrupar facturas por cliente y calcular totales
+        $facturasPorCliente = Factura::selectRaw('cliente_id, SUM(total) as total_compras, COUNT(*) as num_facturas')
+            ->whereNotNull('cliente_id')
+            ->groupBy('cliente_id')
+            ->orderBy('total_compras', 'desc')
+            ->get();
         
-        for ($i = 14; $i >= 0; $i--) {
-            $fecha = now()->subDays($i);
-            $ultimos7Dias[] = $fecha->format('d/m');
-            $clientesPorDia[] = Client::where('is_active', true)
-                ->whereDate('created_at', $fecha->format('Y-m-d'))
-                ->count();
+        $totalComprasGlobal = $facturasPorCliente->sum('total_compras');
+        $abcSuppliers = [];
+        $abcData = [];
+        $abcLabels = [];
+        $acumulado = 0;
+        $suppliers80Percent = [];
+        $suppliers80PercentCount = 0;
+        $suppliers80PercentTotal = 0;
+        
+        foreach ($facturasPorCliente as $item) {
+            $cliente = Cliente::find($item->cliente_id);
+            if (!$cliente) continue;
+            
+            $porcentaje = $totalComprasGlobal > 0 ? ($item->total_compras / $totalComprasGlobal) * 100 : 0;
+            $acumulado += $porcentaje;
+            
+            $nombre = $cliente->nombre_empresa ?? 'Sin nombre';
+            if (strlen($nombre) > 20) {
+                $nombre = substr($nombre, 0, 17) . '...';
+            }
+            
+            // Clasificar en ABC
+            $categoria = 'C';
+            if ($acumulado <= 80) {
+                $categoria = 'A';
+                $suppliers80Percent[] = [
+                    'nombre' => $cliente->nombre_empresa ?? 'Sin nombre',
+                    'total' => $item->total_compras,
+                    'porcentaje' => $porcentaje,
+                    'num_facturas' => $item->num_facturas
+                ];
+                $suppliers80PercentCount++;
+                $suppliers80PercentTotal += $item->total_compras;
+            } elseif ($acumulado <= 95) {
+                $categoria = 'B';
+            }
+            
+            $abcSuppliers[] = [
+                'cliente_id' => $item->cliente_id,
+                'nombre' => $nombre,
+                'total' => $item->total_compras,
+                'porcentaje' => $porcentaje,
+                'acumulado' => $acumulado,
+                'categoria' => $categoria,
+                'num_facturas' => $item->num_facturas
+            ];
+            
+            // Limitar a los primeros 10 para el gráfico
+            if (count($abcLabels) < 10) {
+                $abcLabels[] = $nombre;
+                $abcData[] = $item->total_compras;
+            }
         }
+        
+        // Calcular porcentaje que representan los proveedores del 80%
+        $porcentaje80Percent = $totalComprasGlobal > 0 ? ($suppliers80PercentTotal / $totalComprasGlobal) * 100 : 0;
         
         // Clientes en proceso (pending y received) - Todos los tiempos
         $clientesEnProceso = Client::whereIn('estado', ['pending', 'received'])->count();
@@ -585,11 +638,22 @@
             
             <!-- Charts and Quick Actions -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8">
-                <!-- Chart -->
+                <!-- ABC Analysis Chart -->
                 <div class="lg:col-span-1 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.5s">
-                    <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-2 sm:mb-3 md:mb-4">New Suppliers - Last 15 Days</h2>
-                    <div class="relative w-full" style="height: 200px; sm:height: 250px; md:height: 300px;">
-                        <canvas id="clientesChart"></canvas>
+                    <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-2 sm:mb-3 md:mb-4">ABC Supplier Analysis</h2>
+                    <div class="relative w-full flex items-center justify-center" style="height: 200px; sm:height: 250px; md:height: 300px;">
+                        <div class="relative" style="width: 200px; height: 200px;">
+                            <canvas id="abcAnalysisChart"></canvas>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="text-center">
+                                    <p class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white">{{ round($porcentaje80Percent, 1) }}%</p>
+                                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">Top Suppliers</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-center">
+                        <p class="text-xs text-slate-600 dark:text-slate-400">{{ $suppliers80PercentCount }} suppliers represent {{ round($porcentaje80Percent, 1) }}% of purchases</p>
                     </div>
                 </div>
                 
@@ -807,52 +871,45 @@
     </div>
     
     <script>
-        // Chart configuration - Clientes nuevos
-        const ctxClientes = document.getElementById('clientesChart');
-        if (ctxClientes) {
-            new Chart(ctxClientes, {
-                type: 'line',
+        // ABC Analysis Chart (Donut) - Pareto Analysis
+        const ctxABCAnalysis = document.getElementById('abcAnalysisChart');
+        if (ctxABCAnalysis) {
+            const porcentaje80 = {{ round($porcentaje80Percent, 1) }};
+            const porcentajeResto = 100 - porcentaje80;
+            const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // Colores para el gráfico
+            const colors = [
+                'rgb(16, 185, 129)', // Verde para los proveedores estratégicos
+                isDarkMode ? 'rgba(148, 163, 184, 0.3)' : 'rgba(148, 163, 184, 0.5)' // Gris para el resto
+            ];
+            
+            new Chart(ctxABCAnalysis, {
+                type: 'doughnut',
                 data: {
-                    labels: @json($ultimos7Dias),
+                    labels: ['Strategic Suppliers (80%)', 'Other Suppliers'],
                     datasets: [{
-                        label: 'New Suppliers',
-                        data: @json($clientesPorDia),
-                        borderColor: 'rgb(16, 185, 129)',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        tension: 0.4,
-                        fill: true
+                        data: [porcentaje80, porcentajeResto],
+                        backgroundColor: colors,
+                        borderWidth: 0
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
+                    maintainAspectRatio: true,
+                    cutout: '70%',
                     plugins: {
                         legend: {
-                            position: 'top',
-                            labels: {
-                                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#1e293b',
-                                usePointStyle: true,
-                                padding: 15
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#94a3b8' : '#64748b',
-                                stepSize: 1
-                            },
-                            grid: {
-                                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'
-                            }
+                            display: false
                         },
-                        x: {
-                            ticks: {
-                                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#94a3b8' : '#64748b'
-                            },
-                            grid: {
-                                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'
+                        tooltip: {
+                            enabled: true,
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    return label + ': ' + value.toFixed(1) + '%';
+                                }
                             }
                         }
                     }

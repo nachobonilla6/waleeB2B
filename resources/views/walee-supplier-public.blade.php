@@ -1340,6 +1340,44 @@
             });
         }
         
+        // Subscribe Modal
+        function openSubscribeModal() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            Swal.fire({
+                title: 'Subscribe for More Features',
+                html: `
+                    <div class="text-center py-4">
+                        <p class="text-sm text-slate-700 dark:text-slate-300 mb-4">
+                            Unlock access to all features by subscribing to our premium plan.
+                        </p>
+                        <a href="https://websolutions.work/suscribe" target="_blank" rel="noopener noreferrer" 
+                           class="inline-flex items-center gap-2 px-6 py-3 bg-walee-500 hover:bg-walee-600 text-white rounded-lg font-medium transition-colors shadow-md hover:shadow-lg">
+                            <span>Subscribe Now</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                            </svg>
+                        </a>
+                    </div>
+                `,
+                showConfirmButton: false,
+                showCancelButton: true,
+                cancelButtonText: 'Close',
+                cancelButtonColor: '#6b7280',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html'
+                },
+                didOpen: () => {
+                    const popup = Swal.getPopup();
+                    if (isDarkMode) {
+                        popup.style.backgroundColor = '#0f172a';
+                        popup.style.color = '#e2e8f0';
+                    }
+                }
+            });
+        }
+        
         // Update Profile
         async function updateProfile(data) {
             try {

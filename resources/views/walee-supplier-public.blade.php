@@ -1037,7 +1037,7 @@
                     const message = result.value;
                     
                     // Limpiar número de teléfono (remover espacios, guiones, etc.)
-                    const telefonoLimpio = whatsappLink.replace(/https?:\/\/.*\/.*\/([^\/]+).*/, '$1').replace(/[^\d+]/g, '');
+                    const telefonoLimpio = whatsappLink.replace(/[\s\-\(\)]/g, '');
                     
                     // Asegurar que tenga el código de país si no lo tiene
                     let numeroFinal = telefonoLimpio;

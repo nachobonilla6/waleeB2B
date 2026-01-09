@@ -8462,3 +8462,133 @@ Route::get('/ejemplo1', function () {
         'groupedItems'
     ));
 })->name('ejemplo1');
+
+// Supplier Space Routes
+Route::get('/supplier-space', function () {
+    return view('supplier-space');
+})->name('supplier-space');
+
+Route::post('/supplier-space/authenticate', function (\Illuminate\Http\Request $request) {
+    $code = $request->input('code');
+    
+    if ($code === '1234') {
+        $request->session()->put('supplier_space_authenticated', true);
+        return response()->json([
+            'success' => true,
+            'message' => 'Access granted'
+        ]);
+    }
+    
+    return response()->json([
+        'success' => false,
+        'message' => 'Invalid access code'
+    ], 401);
+})->name('supplier-space.authenticate');
+
+Route::post('/supplier-space/logout', function (\Illuminate\Http\Request $request) {
+    $request->session()->forget(['supplier_space_authenticated', 'supplier_space_supplier']);
+    return redirect()->route('supplier-space');
+})->name('supplier-space.logout');
+
+Route::post('/supplier-space/search', function (\Illuminate\Http\Request $request) {
+    if (!$request->session()->has('supplier_space_authenticated')) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Not authenticated'
+        ], 401);
+    }
+    
+    $search = $request->input('search');
+    
+    $supplier = \App\Models\Client::where(function($query) use ($search) {
+        $query->where('email', 'like', '%' . $search . '%')
+              ->orWhere('name', 'like', '%' . $search . '%');
+    })->first();
+    
+    if ($supplier) {
+        $request->session()->put('supplier_space_supplier', $supplier);
+        return response()->json([
+            'success' => true,
+            'message' => 'Supplier found'
+        ]);
+    }
+    
+    return response()->json([
+        'success' => false,
+        'message' => 'Supplier not found'
+    ], 404);
+})->name('supplier-space.search');
+
+Route::post('/supplier-space/update-profile', function (\Illuminate\Http\Request $request) {
+    if (!$request->session()->has('supplier_space_authenticated')) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Not authenticated'
+        ], 401);
+    }
+    
+    $supplierId = $request->input('supplier_id');
+    $supplier = \App\Models\Client::find($supplierId);
+    
+    if (!$supplier) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Supplier not found'
+        ], 404);
+    }
+    
+    $supplier->name = $request->input('name');
+    $supplier->email = $request->input('email');
+    $supplier->telefono_1 = $request->input('telefono_1');
+    $supplier->telefono_2 = $request->input('telefono_2');
+    $supplier->direccion = $request->input('direccion') ?: $supplier->direccion;
+    $supplier->address = $request->input('direccion') ?: $supplier->address;
+    $supplier->save();
+    
+    // Update session
+    $request->session()->put('supplier_space_supplier', $supplier);
+    
+    return response()->json([
+        'success' => true,
+        'message' => 'Profile updated successfully'
+    ]);
+})->name('supplier-space.update-profile');
+
+Route::post('/supplier-space/update-product', function (\Illuminate\Http\Request $request) {
+    if (!$request->session()->has('supplier_space_authenticated')) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Not authenticated'
+        ], 401);
+    }
+    
+    $productId = $request->input('product_id');
+    $product = \App\Models\Rproducto::find($productId);
+    
+    if (!$product) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Product not found'
+        ], 404);
+    }
+    
+    // Verify product belongs to supplier
+    $supplier = $request->session()->get('supplier_space_supplier');
+    if (!$supplier || $product->cliente_id != $supplier->id) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Unauthorized'
+        ], 403);
+    }
+    
+    $product->nombre = $request->input('nombre');
+    $product->descripcion = $request->input('descripcion');
+    $product->tipo = $request->input('tipo');
+    $product->estado = $request->input('estado');
+    $product->save();
+    
+    return response()->json([
+        'success' => true,
+        'message' => 'Product updated successfully'
+    ]);
+})->name('supplier-space.update-product');

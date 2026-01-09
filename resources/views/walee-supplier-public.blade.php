@@ -75,7 +75,7 @@
         $bandera = $pais ? $getCountryFlag($pais) : null;
         
         // Obtener productos del supplier
-        $productos = \App\Models\Rproducto::where('cliente_id', $supplier->id)->orderBy('created_at', 'desc')->get();
+        $productos = \App\Models\ProductoSuper::where('cliente_id', $supplier->id)->orderBy('created_at', 'desc')->get();
     @endphp
 
     <div class="min-h-screen relative flex flex-col">
@@ -452,9 +452,10 @@
                         <div class="flex items-start justify-between gap-3">
                             <div class="flex-1">
                                 <h3 class="font-semibold text-slate-900 dark:text-white mb-1">${producto.nombre || 'Unnamed Product'}</h3>
-                                ${producto.tipo ? `<p class="text-sm text-slate-600 dark:text-slate-400 mb-1">Type: ${producto.tipo}</p>` : ''}
-                                ${producto.descripcion ? `<p class="text-sm text-slate-600 dark:text-slate-400">${producto.descripcion}</p>` : ''}
-                                ${producto.estado ? `<span class="inline-block mt-2 px-2 py-1 text-xs rounded ${producto.estado === 'activo' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}">${producto.estado}</span>` : ''}
+                                ${producto.categoria ? `<p class="text-sm text-slate-600 dark:text-slate-400 mb-1">Category: ${producto.categoria}</p>` : ''}
+                                ${producto.descripcion ? `<p class="text-sm text-slate-600 dark:text-slate-400 mb-1">${producto.descripcion}</p>` : ''}
+                                ${producto.stock !== undefined ? `<p class="text-sm text-slate-600 dark:text-slate-400 mb-1">Stock: ${producto.stock}</p>` : ''}
+                                ${producto.activo !== undefined ? `<span class="inline-block mt-2 px-2 py-1 text-xs rounded ${producto.activo ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}">${producto.activo ? 'Active' : 'Inactive'}</span>` : ''}
                             </div>
                         </div>
                     </div>

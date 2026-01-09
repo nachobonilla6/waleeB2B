@@ -646,7 +646,7 @@
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Expiration Date</label>
                                 <input type="date" id="editProductExpirationDate" name="fecha_expiracion"
                                        class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                       value="${producto.fecha_expiracion || ''}">
+                                       value="${(producto.fecha_expiracion && producto.fecha_expiracion !== null) ? producto.fecha_expiracion : ''}">
                             </div>
                         </div>
                         <div class="grid grid-cols-3 gap-2.5">
@@ -654,19 +654,19 @@
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Entry Date</label>
                                 <input type="date" id="editProductEntryDate" name="fecha_entrada"
                                        class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                       value="${producto.fecha_entrada || ''}">
+                                       value="${(producto.fecha_entrada && producto.fecha_entrada !== null) ? producto.fecha_entrada : ''}">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">DLC</label>
                                 <input type="date" id="editProductDlc" name="dlc"
                                        class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                       value="${producto.dlc || ''}">
+                                       value="${(producto.dlc && producto.dlc !== null) ? producto.dlc : ''}">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">DLV</label>
                                 <input type="date" id="editProductDlv" name="fecha_limite_venta"
                                        class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                       value="${producto.fecha_limite_venta || ''}">
+                                       value="${(producto.fecha_limite_venta && producto.fecha_limite_venta !== null) ? producto.fecha_limite_venta : ''}">
                             </div>
                         </div>
                         <div>

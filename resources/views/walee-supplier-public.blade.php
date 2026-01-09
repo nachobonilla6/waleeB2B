@@ -511,9 +511,12 @@
                         <div class="grid grid-cols-2 gap-2.5">
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Price *</label>
-                                <input type="number" id="productPrice" name="precio" min="0" step="0.01" value="0" required
-                                       class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                       placeholder="0.00">
+                                <div class="relative">
+                                    <span class="absolute left-2 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">$</span>
+                                    <input type="number" id="productPrice" name="precio" min="0" step="0.01" value="0" required
+                                           class="w-full pl-6 pr-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                           placeholder="0.00">
+                                </div>
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Stock Quantity</label>

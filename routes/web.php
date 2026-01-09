@@ -6647,7 +6647,7 @@ Route::delete('/walee-cotizaciones/{id}/eliminar', function ($id) {
 })->middleware(['auth'])->name('walee.cotizaciones.eliminar');
 
 // Ruta para ver detalle de un cliente
-Route::get('/walee-cliente/{id}', function ($id) {
+Route::get('/walee-supplier/{id}', function ($id) {
     $cliente = \App\Models\Client::findOrFail($id);
     
     // Buscar cliente en tabla clientes por email (prioridad) o nombre para obtener cotizaciones y facturas
@@ -6778,16 +6778,16 @@ Route::get('/walee-cliente/{id}', function ($id) {
     $emailsEnviados = \App\Models\PropuestaPersonalizada::where('cliente_id', $cliente->id)->count();
     
     return view('walee-cliente-detalle', compact('cliente', 'contratos', 'cotizaciones', 'facturas', 'productos', 'clientePrincipal', 'citasPasadas', 'citasPendientes', 'publicacionesProgramadas', 'publicacionesPublicadas', 'clientePlaneadorId', 'templates', 'emailsEnviados'));
-})->middleware(['auth'])->name('walee.cliente.detalle');
+})->middleware(['auth'])->name('walee.supplier.detalle');
 
 // Ruta para editar un cliente
-Route::get('/walee-cliente/{id}/editar', function ($id) {
+Route::get('/walee-supplier/{id}/editar', function ($id) {
     $cliente = \App\Models\Client::findOrFail($id);
     return view('walee-cliente-editar', compact('cliente'));
 })->middleware(['auth'])->name('walee.cliente.editar');
 
 // Ruta para actualizar un cliente
-Route::match(['put', 'post'], '/walee-cliente/{id}', function (\Illuminate\Http\Request $request, $id) {
+Route::match(['put', 'post'], '/walee-supplier/{id}', function (\Illuminate\Http\Request $request, $id) {
     try {
         $cliente = \App\Models\Client::findOrFail($id);
         
@@ -6864,7 +6864,7 @@ Route::match(['put', 'post'], '/walee-cliente/{id}', function (\Illuminate\Http\
             ]);
         }
         
-        return redirect()->route('walee.cliente.detalle', $id)->with('success', 'Cliente actualizado correctamente');
+        return redirect()->route('walee.supplier.detalle', $id)->with('success', 'Supplier actualizado correctamente');
     } catch (\Exception $e) {
         \Log::error('Error al actualizar cliente', [
             'id' => $id,
@@ -6878,17 +6878,17 @@ Route::match(['put', 'post'], '/walee-cliente/{id}', function (\Illuminate\Http\
             ], 500);
         }
         
-        return redirect()->route('walee.cliente.detalle', $id)->with('error', 'Error al actualizar el cliente');
+        return redirect()->route('walee.supplier.detalle', $id)->with('error', 'Error al actualizar el supplier');
     }
 })->middleware(['auth'])->name('walee.cliente.actualizar');
 
 // Ruta para settings del cliente (redirige al detalle del cliente)
-Route::get('/walee-cliente/{id}/settings', function ($id) {
-    return redirect()->route('walee.cliente.detalle', $id);
-})->middleware(['auth'])->name('walee.cliente.settings');
+Route::get('/walee-supplier/{id}/settings', function ($id) {
+    return redirect()->route('walee.supplier.detalle', $id);
+})->middleware(['auth'])->name('walee.supplier.settings');
 
 // Ruta para pestaña de planeador - Redirigir al nuevo planeador
-Route::get('/walee-cliente/{id}/settings/planeador', function ($id) {
+Route::get('/walee-supplier/{id}/settings/planeador', function ($id) {
     try {
         // Buscar el cliente en la tabla Cliente (no Client)
         $clientePrincipal = \App\Models\Cliente::where('id', $id)->first();
@@ -6904,10 +6904,10 @@ Route::get('/walee-cliente/{id}/settings/planeador', function ($id) {
             return redirect()->route('walee.planeador.publicidad', $clientePrincipal->id);
         }
         
-        // Si no se encuentra, redirigir al detalle del cliente
-        return redirect()->route('walee.cliente.detalle', $id);
+        // Si no se encuentra, redirigir al detalle del supplier
+        return redirect()->route('walee.supplier.detalle', $id);
     } catch (\Exception $e) {
-        return redirect()->route('walee.cliente.detalle', $id);
+        return redirect()->route('walee.supplier.detalle', $id);
     }
 })->middleware(['auth'])->name('walee.cliente.settings.planeador');
 
@@ -6988,7 +6988,7 @@ Route::get('/walee-facebook/publicaciones', function (\Illuminate\Http\Request $
     })->middleware(['auth'])->name('walee.facebook.publicaciones');
 
 // Ruta para guardar webhook del cliente
-Route::post('/walee-cliente/{id}/webhook', function (\Illuminate\Http\Request $request, $id) {
+Route::post('/walee-supplier/{id}/webhook', function (\Illuminate\Http\Request $request, $id) {
     try {
         $cliente = \App\Models\Client::findOrFail($id);
         
@@ -7019,7 +7019,7 @@ Route::post('/walee-cliente/{id}/webhook', function (\Illuminate\Http\Request $r
 })->middleware(['auth'])->name('walee.cliente.webhook');
 
 // Ruta para guardar webhook de productos del cliente
-Route::post('/walee-cliente/{id}/webhook-productos', function (\Illuminate\Http\Request $request, $id) {
+Route::post('/walee-supplier/{id}/webhook-productos', function (\Illuminate\Http\Request $request, $id) {
     try {
         $cliente = \App\Models\Client::findOrFail($id);
         
@@ -7039,7 +7039,7 @@ Route::post('/walee-cliente/{id}/webhook-productos', function (\Illuminate\Http\
 })->middleware(['auth'])->name('walee.cliente.webhook.productos');
 
 // Ruta para guardar nota del cliente
-Route::post('/walee-cliente/{id}/nota', function (\Illuminate\Http\Request $request, $id) {
+Route::post('/walee-supplier/{id}/nota', function (\Illuminate\Http\Request $request, $id) {
     try {
         $cliente = \App\Models\Client::findOrFail($id);
         
@@ -7574,7 +7574,7 @@ Route::delete('/listas/{id}', function ($id) {
 
 // Ruta para crear publicación del cliente
 // API para generar publicación de Facebook con AI
-Route::post('/walee-cliente/{id}/publicaciones/generar', function (\Illuminate\Http\Request $request, $id) {
+Route::post('/walee-supplier/{id}/publicaciones/generar', function (\Illuminate\Http\Request $request, $id) {
     try {
         $apiKey = config('services.openai.api_key');
         if (empty($apiKey)) {
@@ -7731,7 +7731,7 @@ Route::post('/walee/whatsapp/generar-mensaje', function (\Illuminate\Http\Reques
     }
 })->middleware(['auth'])->name('walee.whatsapp.generar-mensaje');
 
-Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Request $request, $id) {
+Route::post('/walee-supplier/{id}/publicaciones', function (\Illuminate\Http\Request $request, $id) {
     try {
         $cliente = \App\Models\Client::findOrFail($id);
         
@@ -7859,7 +7859,7 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
 })->middleware(['auth'])->name('walee.cliente.publicaciones.store');
 
 // Ruta para ver publicación (vista previa para compartir) - Sin autenticación para que Facebook pueda leer los Open Graph tags
-Route::get('/walee-cliente/{id}/publicaciones/{publicacion_id}/share', function ($id, $publicacion_id) {
+Route::get('/walee-supplier/{id}/publicaciones/{publicacion_id}/share', function ($id, $publicacion_id) {
     try {
         $cliente = \App\Models\Client::findOrFail($id);
         $publicacion = \App\Models\Post::where('id', $publicacion_id)
@@ -7873,7 +7873,7 @@ Route::get('/walee-cliente/{id}/publicaciones/{publicacion_id}/share', function 
 })->name('walee.cliente.publicaciones.share');
 
 // Ruta para republicar publicación en Facebook
-Route::post('/walee-cliente/{id}/publicaciones/{publicacion_id}/republicar', function ($id, $publicacion_id) {
+Route::post('/walee-supplier/{id}/publicaciones/{publicacion_id}/republicar', function ($id, $publicacion_id) {
     try {
         $cliente = \App\Models\Client::findOrFail($id);
         $publicacion = \App\Models\Post::where('id', $publicacion_id)
@@ -7952,7 +7952,7 @@ Route::post('/walee-cliente/{id}/publicaciones/{publicacion_id}/republicar', fun
 })->middleware(['auth'])->name('walee.cliente.publicaciones.republicar');
 
 // Ruta para compartir publicación por WhatsApp (con imagen visible) - Sin autenticación para que WhatsApp pueda leer los Open Graph tags
-Route::get('/walee-cliente/{id}/publicaciones/{publicacion_id}/whatsapp', function ($id, $publicacion_id) {
+Route::get('/walee-supplier/{id}/publicaciones/{publicacion_id}/whatsapp', function ($id, $publicacion_id) {
     try {
         $cliente = \App\Models\Client::findOrFail($id);
         $publicacion = \App\Models\Post::where('id', $publicacion_id)
@@ -7966,7 +7966,7 @@ Route::get('/walee-cliente/{id}/publicaciones/{publicacion_id}/whatsapp', functi
 })->name('walee.cliente.publicaciones.whatsapp');
 
 // Ruta para eliminar publicación del cliente
-Route::delete('/walee-cliente/{id}/publicaciones/{publicacion_id}', function ($id, $publicacion_id) {
+Route::delete('/walee-supplier/{id}/publicaciones/{publicacion_id}', function ($id, $publicacion_id) {
     try {
         $cliente = \App\Models\Client::findOrFail($id);
         $publicacion = \App\Models\Post::where('id', $publicacion_id)

@@ -1359,7 +1359,7 @@
                         <p class="text-sm text-slate-700 dark:text-slate-300 mb-4">
                             Unlock access to all features by subscribing to our premium plan.
                         </p>
-                        <a href="https://websolutions.work/suscribe" target="_blank" rel="noopener noreferrer" 
+                        <a href="{{ route('suscribe') }}" 
                            class="inline-flex items-center gap-2 px-6 py-3 bg-walee-500 hover:bg-walee-600 text-white rounded-lg font-medium transition-colors shadow-md hover:shadow-lg">
                             <span>Subscribe Now</span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

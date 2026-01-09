@@ -719,9 +719,17 @@
         
         <!-- Main Content -->
         <div class="relative max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 w-full">
-            @include('partials.walee-back-button')
-            <!-- Botón del extractor fuera de la sección, esquina superior derecha (desactivado) -->
-            <div class="absolute top-6 right-4 sm:right-6 z-30">
+            <!-- Botones Back + Extractor en la esquina superior derecha -->
+            <div class="absolute top-6 right-4 sm:right-6 z-30 flex items-center gap-3">
+                <!-- Back Button -->
+                <a href="{{ url()->previous() }}" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    <span>Back</span>
+                </a>
+
+                <!-- Botón del extractor (desactivado) -->
                 <span class="inline-flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg bg-gray-400/80 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg cursor-not-allowed opacity-60" title="Extractor desactivado">
                     <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>

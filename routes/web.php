@@ -7001,10 +7001,10 @@ Route::post('/walee-supplier/{id}/public/add-product', function (\Illuminate\Htt
             'activo' => $request->input('estado') === 'activo',
             'stock' => $request->input('stock', 0),
             'cantidad' => $request->input('stock', 0),
-            'fecha_expiracion' => $request->input('fecha_expiracion') ?: null,
-            'fecha_entrada' => $request->input('fecha_entrada') ?: null,
-            'dlc' => $request->input('dlc') ?: null,
-            'fecha_limite_venta' => $request->input('fecha_limite_venta') ?: null,
+            'fecha_expiracion' => !empty($request->input('fecha_expiracion')) ? $request->input('fecha_expiracion') : null,
+            'fecha_entrada' => !empty($request->input('fecha_entrada')) ? $request->input('fecha_entrada') : null,
+            'dlc' => !empty($request->input('dlc')) ? $request->input('dlc') : null,
+            'fecha_limite_venta' => !empty($request->input('fecha_limite_venta')) ? $request->input('fecha_limite_venta') : null,
             'imagen' => $imagenPath,
         ]);
         
@@ -7070,10 +7070,10 @@ Route::post('/walee-supplier/{id}/public/update-product', function (\Illuminate\
         $producto->activo = $request->input('estado') === 'activo';
         $producto->stock = $request->input('stock', 0);
         $producto->cantidad = $request->input('stock', 0);
-        $producto->fecha_expiracion = $request->input('fecha_expiracion') ?: null;
-        $producto->fecha_entrada = $request->input('fecha_entrada') ?: null;
-        $producto->dlc = $request->input('dlc') ?: null;
-        $producto->fecha_limite_venta = $request->input('fecha_limite_venta') ?: null;
+        $producto->fecha_expiracion = !empty($request->input('fecha_expiracion')) ? $request->input('fecha_expiracion') : null;
+        $producto->fecha_entrada = !empty($request->input('fecha_entrada')) ? $request->input('fecha_entrada') : null;
+        $producto->dlc = !empty($request->input('dlc')) ? $request->input('dlc') : null;
+        $producto->fecha_limite_venta = !empty($request->input('fecha_limite_venta')) ? $request->input('fecha_limite_venta') : null;
         
         // Handle image update
         if ($request->hasFile('imagen')) {

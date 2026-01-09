@@ -78,6 +78,11 @@
         $productos = \App\Models\ProductoSuper::where('cliente_id', $supplier->id)->orderBy('created_at', 'desc')->get();
         $productos = $productos->map(function($producto) {
             $producto->imagen_url = $producto->imagen ? asset('storage/' . $producto->imagen) : null;
+            // Formatear fechas para JavaScript
+            $producto->fecha_expiracion = $producto->fecha_expiracion ? $producto->fecha_expiracion->format('Y-m-d') : null;
+            $producto->fecha_entrada = $producto->fecha_entrada ? $producto->fecha_entrada->format('Y-m-d') : null;
+            $producto->dlc = $producto->dlc ? $producto->dlc->format('Y-m-d') : null;
+            $producto->fecha_limite_venta = $producto->fecha_limite_venta ? $producto->fecha_limite_venta->format('Y-m-d') : null;
             return $producto;
         });
     @endphp
@@ -931,6 +936,9 @@
                         formData.append('precio', result.value.precio);
                         formData.append('stock', result.value.stock);
                         formData.append('fecha_expiracion', result.value.fecha_expiracion || '');
+                        formData.append('fecha_entrada', result.value.fecha_entrada || '');
+                        formData.append('dlc', result.value.dlc || '');
+                        formData.append('fecha_limite_venta', result.value.fecha_limite_venta || '');
                         formData.append('cliente_id', result.value.cliente_id);
                         
                         if (result.value.imagen) {

@@ -262,15 +262,15 @@
                     
                     <!-- Statistics Buttons -->
                     <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-4">
-                        <button onclick="openSubscribeModal()" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-yellow-100 dark:bg-yellow-500/20 hover:bg-yellow-200 dark:hover:bg-yellow-500/30 text-yellow-700 dark:text-yellow-400 border border-yellow-300 dark:border-yellow-500/30 transition-all shadow-sm cursor-pointer">
+                        <button onclick="openSubscribeModal()" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-yellow-100 dark:hover:bg-yellow-500/20 text-slate-500 dark:text-slate-400 hover:text-yellow-600 dark:hover:text-yellow-400 border border-slate-300 dark:border-slate-700 hover:border-yellow-300 dark:hover:border-yellow-500/30 transition-all shadow-sm cursor-pointer">
                             <span class="text-xs font-medium">Appointments</span>
                             <span class="text-sm font-bold">{{ $appointmentsCount }}</span>
                         </button>
-                        <button onclick="openSubscribeModal()" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-red-100 dark:bg-red-500/20 hover:bg-red-200 dark:hover:bg-red-500/30 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-500/30 transition-all shadow-sm cursor-pointer">
+                        <button onclick="openSubscribeModal()" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-red-100 dark:hover:bg-red-500/20 text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 border border-slate-300 dark:border-slate-700 hover:border-red-300 dark:hover:border-red-500/30 transition-all shadow-sm cursor-pointer">
                             <span class="text-xs font-medium">Invoices</span>
                             <span class="text-sm font-bold">{{ $invoicesCount }}</span>
                         </button>
-                        <button onclick="openSubscribeModal()" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-orange-100 dark:bg-orange-500/20 hover:bg-orange-200 dark:hover:bg-orange-500/30 text-orange-700 dark:text-orange-400 border border-orange-300 dark:border-orange-500/30 transition-all shadow-sm cursor-pointer">
+                        <button onclick="openSubscribeModal()" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-orange-100 dark:hover:bg-orange-500/20 text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 border border-slate-300 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-500/30 transition-all shadow-sm cursor-pointer">
                             <span class="text-xs font-medium">Contracts</span>
                             <span class="text-sm font-bold">{{ $contractsCount }}</span>
                         </button>
@@ -278,7 +278,7 @@
                             <span class="text-xs font-medium">Products</span>
                             <span class="text-sm font-bold">{{ $productsCount }}</span>
                         </button>
-                        <button onclick="openSubscribeModal()" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 hover:bg-emerald-200 dark:hover:bg-emerald-500/30 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/30 transition-all shadow-sm cursor-pointer">
+                        <button onclick="openSubscribeModal()" class="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-300 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-500/30 transition-all shadow-sm cursor-pointer">
                             <span class="text-xs font-medium">Emails Enviados</span>
                             <span class="text-sm font-bold">{{ $emailsSentCount }}</span>
                         </button>

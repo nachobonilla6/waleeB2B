@@ -881,28 +881,13 @@
                         
                         <!-- Acciones Rápidas Mobile -->
                         <div class="px-3 pb-3">
-                            <div class="grid grid-cols-5 gap-1.5">
+                            <div class="grid grid-cols-4 gap-1.5">
                                 <!-- Note Button -->
                                 <button onclick="openNotaModal()" class="flex items-center justify-center p-2 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-amber-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm" title="Note">
                                     <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-amber-600 dark:text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                     </svg>
                                 </button>
-                                
-                                <!-- Website Button -->
-                                @if($cliente->website)
-                                    <a href="{{ $cliente->website }}" target="_blank" class="flex items-center justify-center p-2 rounded-lg bg-blue-100 dark:bg-slate-800 hover:bg-blue-200 dark:hover:bg-slate-700 text-blue-600 dark:text-blue-600 border border-blue-600 dark:border-slate-700 transition-all group shadow-sm">
-                                        <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-blue-600 dark:text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
-                    </svg>
-                                    </a>
-                                @else
-                                    <div class="flex items-center justify-center p-2 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed">
-                                        <svg class="w-5 h-5 flex-shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
-                    </svg>
-            </div>
-                                @endif
             
                                 <!-- Email Button -->
                                 <button type="button" onclick="(function(){ console.log('=== DEBUG: Click en botón de email (mobile) ==='); console.log('window.openEmailModal:', typeof window.openEmailModal); console.log('window keys con Email:', Object.keys(window).filter(k => k.toLowerCase().includes('email'))); console.log('window keys con Modal:', Object.keys(window).filter(k => k.toLowerCase().includes('modal'))); console.log('window keys con Phase:', Object.keys(window).filter(k => k.toLowerCase().includes('phase'))); try { if(typeof window.openEmailModal === 'function') { console.log('✓ Llamando a window.openEmailModal()'); window.openEmailModal(); } else { console.error('✗ ERROR: window.openEmailModal no es una función'); console.error('Tipo:', typeof window.openEmailModal); console.error('Valor:', window.openEmailModal); console.error('Todas las keys de window:', Object.keys(window).slice(0, 50)); alert('Error: La función de email no está disponible.\n\nTipo: ' + typeof window.openEmailModal + '\n\nRevisa la consola para más detalles.'); } } catch(e) { console.error('✗ EXCEPCIÓN al ejecutar:', e); console.error('Stack:', e.stack); alert('Error: ' + e.message + '\n\nRevisa la consola para más detalles.'); } })();" class="flex items-center justify-center p-2 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-walee-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm">

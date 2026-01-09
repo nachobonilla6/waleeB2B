@@ -992,7 +992,7 @@
                     }
                 },
                 preConfirm: () => {
-                    const message = document.getElementById('whatsappMessage').value;
+                    const message = document.getElementById('whatsappMessage').value.trim();
                     const selectedProducts = [];
                     
                     // Get selected products
@@ -1004,11 +1004,20 @@
                         });
                     });
                     
+                    // Validate that there's either a message or selected products
+                    if (!message && selectedProducts.length === 0) {
+                        Swal.showValidationMessage('Please enter a message or select at least one product');
+                        return false;
+                    }
+                    
                     // Build final message
                     let finalMessage = message;
                     
                     if (selectedProducts.length > 0) {
-                        finalMessage += '\n\nAvailable Products:\n';
+                        if (message) {
+                            finalMessage += '\n\n';
+                        }
+                        finalMessage += 'Available Products:\n';
                         selectedProducts.forEach((product, index) => {
                             finalMessage += `${index + 1}. ${product.name}`;
                             if (product.stock && parseInt(product.stock) > 0) {
@@ -1021,7 +1030,7 @@
                         });
                     }
                     
-                    return finalMessage;
+                    return finalMessage.trim();
                 }
             }).then((result) => {
                 if (result.isConfirmed && result.value) {

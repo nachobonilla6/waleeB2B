@@ -198,6 +198,18 @@
                         </button>
                     </div>
                     
+                    <!-- Subscribe Section - Subtle -->
+                    <div class="pt-3 pb-2">
+                        <div class="text-center">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">
+                                Subscribe for more features
+                            </p>
+                            <a href="https://websolutions.work/suscribe" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-xs text-walee-500 hover:text-walee-600 dark:text-walee-400 dark:hover:text-walee-300 transition-colors underline decoration-dotted underline-offset-2">
+                                <span>websolutions.work/suscribe</span>
+                            </a>
+                        </div>
+                    </div>
+                    
                     <!-- Edit Profile Form -->
                     <div class="border-t border-slate-200 dark:border-slate-700 pt-6">
                         <div class="flex items-center justify-between mb-4">
@@ -233,21 +245,6 @@
                                 <label class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Company Contact</label>
                                 <p class="text-sm font-semibold text-slate-900 dark:text-white">{{ $supplier->contacto_empresa ?? 'N/A' }}</p>
                             </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Subscribe Section -->
-                    <div class="border-t border-slate-200 dark:border-slate-700 pt-4 mt-4">
-                        <div class="bg-gradient-to-r from-walee-400/10 to-walee-500/10 dark:from-walee-400/5 dark:to-walee-500/5 border border-walee-400/20 dark:border-walee-500/20 rounded-lg p-3 text-center">
-                            <p class="text-xs text-slate-700 dark:text-slate-300 mb-2">
-                                Subscribe for more features
-                            </p>
-                            <a href="https://websolutions.work/suscribe" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-walee-500 hover:bg-walee-600 text-white text-sm font-medium rounded-lg transition-all shadow-sm hover:shadow-md active:scale-95">
-                                <span>Subscribe</span>
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                            </a>
                         </div>
                     </div>
                 </div>

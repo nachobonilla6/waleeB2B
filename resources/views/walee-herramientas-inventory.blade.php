@@ -138,7 +138,7 @@
         </div>
         
         <!-- Main Content -->
-        <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8 pt-24 sm:pt-28">
+        <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8 pt-28 sm:pt-32">
             @include('partials.walee-back-button')
             <!-- Header -->
             <div class="mb-6 sm:mb-8 animate-fade-in-up" style="animation-delay: 0.1s;">

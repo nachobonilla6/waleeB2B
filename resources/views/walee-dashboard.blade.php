@@ -364,7 +364,7 @@
         </div>
         
         <!-- Main Content -->
-        <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8 pt-24 sm:pt-28">
+        <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8 pt-28 sm:pt-32">
             <!-- World Map & Timezones (primero en el dashboard) -->
             @include('partials.walee-world-map-clocks')
             

@@ -566,7 +566,7 @@
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
                                             </svg>
-                                            QR Super
+                                            Clientes
                                         </label>
                                         <div class="flex gap-1.5">
                                             <input 
@@ -574,22 +574,22 @@
                                                 id="productoFotoQrSuper" 
                                                 name="foto_qr_super" 
                                                 accept="image/*"
-                                                class="flex-1 px-2 py-1.5 text-xs border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 dark:file:bg-emerald-900/30 dark:file:text-emerald-300"
+                                                class="flex-1 px-2 py-1.5 text-xs border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 dark:file:bg-pink-900/30 dark:file:text-pink-300"
                                             >
                                             <button 
                                                 type="button"
                                                 onclick="generateQRCodeSuperProductosSuper()"
-                                                class="px-2 py-1.5 text-xs bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-lg font-medium transition-all flex items-center gap-1 shadow-sm hover:shadow"
-                                                title="Generar QR Super automáticamente"
+                                                class="px-2 py-1.5 text-xs bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white rounded-lg font-medium transition-all flex items-center gap-1 shadow-sm hover:shadow"
+                                                title="Generar QR Clientes automáticamente"
                                             >
                                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                                                 </svg>
-                                                <span class="hidden sm:inline">QR Super</span>
+                                                <span class="hidden sm:inline">Clientes</span>
                                             </button>
                                         </div>
                                         <div id="fotoQrSuperPreview" class="mt-1 hidden">
-                                            <img id="fotoQrSuperPreviewImg" src="" alt="Preview QR Super" class="w-16 h-16 object-cover rounded border border-slate-300 dark:border-slate-600">
+                                            <img id="fotoQrSuperPreviewImg" src="" alt="Preview QR Clientes" class="w-16 h-16 object-cover rounded border border-pink-300 dark:border-pink-600">
                                         </div>
                                     </div>
                                 </div>
@@ -806,10 +806,10 @@
                                                         <div class="flex-shrink-0">
                                                             <img 
                                                                 src="{{ $qrSuperUrl }}" 
-                                                                alt="QR Super {{ $producto->nombre }}" 
-                                                                class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border border-emerald-300 dark:border-emerald-600 shadow-sm"
+                                                                alt="QR Clientes {{ $producto->nombre }}" 
+                                                                class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border border-pink-300 dark:border-pink-600 shadow-sm"
                                                                 loading="lazy"
-                                                                title="QR Super Code"
+                                                                title="QR Clientes"
                                                             >
                                                         </div>
                                                     @endif

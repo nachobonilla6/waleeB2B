@@ -211,6 +211,11 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-1 flex-shrink-0">
+                            <button onclick="gestionarPagosFactura({{ $factura->id }}, '{{ $factura->numero_factura }}')" class="p-2 rounded-lg bg-purple-500 hover:bg-purple-600 text-white transition-all shadow-sm hover:shadow" title="Gestionar Pagos">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </button>
                             @if(!$factura->enviada_at)
                                 <button onclick="enviarFactura({{ $factura->id }})" class="p-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white transition-all shadow-sm hover:shadow" title="Enviar">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -548,6 +553,296 @@
         function verPDFFactura(facturaId, numeroFactura) {
             const pdfUrl = `/walee-facturas/${facturaId}/pdf`;
             window.open(pdfUrl, '_blank');
+        }
+        
+        // Gestionar pagos de factura
+        async function gestionarPagosFactura(facturaId, numeroFactura) {
+            try {
+                // Cargar pagos existentes
+                const response = await fetch(`/walee-facturas/${facturaId}/pagos`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                });
+                
+                const data = await response.json();
+                const pagos = data.pagos || [];
+                const factura = data.factura || {};
+                
+                // Mostrar pagos existentes
+                let pagosHtml = '';
+                if (pagos.length === 0) {
+                    pagosHtml = '<p class="text-sm text-slate-500 dark:text-slate-400 text-center py-4">No hay pagos registrados</p>';
+                } else {
+                    pagosHtml = pagos.map((pago, index) => `
+                        <div class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg mb-2 flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-sm font-medium">${pago.descripcion || 'Sin descripción'}</p>
+                                <p class="text-xs text-slate-500">${pago.fecha} - $${parseFloat(pago.importe).toLocaleString()} (${pago.metodo_pago || 'Sin método'})</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="moverPago(${pago.id}, ${facturaId})" class="px-2 py-1 text-xs bg-blue-500 hover:bg-blue-600 text-white rounded transition-colors">Mover</button>
+                                <button onclick="eliminarPago(${pago.id}, ${facturaId})" class="px-2 py-1 text-xs bg-red-500 hover:bg-red-600 text-white rounded transition-colors">Eliminar</button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+                
+                // Cargar lista de facturas para mover pagos
+                const facturasResponse = await fetch(`/walee-facturas/lista-facturas`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                });
+                const facturasData = await facturasResponse.json();
+                const facturasOptions = (facturasData.facturas || []).filter(f => f.id != facturaId).map(f => 
+                    `<option value="${f.id}">#${f.numero_factura} - ${f.cliente_nombre || 'Sin cliente'} - $${parseFloat(f.total).toFixed(2)}</option>`
+                ).join('');
+                
+                const html = `
+                    <div class="text-left space-y-4">
+                        <div class="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-lg p-3 mb-3">
+                            <p class="text-xs text-blue-700 dark:text-blue-300">
+                                <strong>Factura #${numeroFactura}</strong><br>
+                                Total: $${parseFloat(factura.total || 0).toFixed(2)} | 
+                                Pagado: $${parseFloat(factura.monto_pagado || 0).toFixed(2)} | 
+                                Pendiente: $${parseFloat((factura.total || 0) - (factura.monto_pagado || 0)).toFixed(2)}
+                            </p>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Pagos Existentes</h3>
+                            <div id="pagos_list" class="max-h-60 overflow-y-auto mb-3">
+                                ${pagosHtml}
+                            </div>
+                        </div>
+                        <div class="border-t border-slate-200 dark:border-slate-700 pt-3">
+                            <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Agregar Nuevo Pago</h3>
+                            <div class="grid grid-cols-4 gap-2 mb-2">
+                                <div class="col-span-2">
+                                    <input type="text" id="nuevo_pago_descripcion" placeholder="Descripción" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                                </div>
+                                <div>
+                                    <input type="date" id="nuevo_pago_fecha" value="${new Date().toISOString().split('T')[0]}" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                                </div>
+                                <div>
+                                    <input type="number" id="nuevo_pago_importe" step="0.01" placeholder="Importe" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <select id="nuevo_pago_metodo" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                                    <option value="">Método de pago...</option>
+                                    <option value="sinpe">SINPE</option>
+                                    <option value="transferencia">Transferencia</option>
+                                    <option value="efectivo">Efectivo</option>
+                                    <option value="tarjeta">Tarjeta</option>
+                                </select>
+                            </div>
+                            <button onclick="agregarPagoAFactura(${facturaId})" class="w-full px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm transition-colors">Agregar Pago</button>
+                        </div>
+                    </div>
+                `;
+                
+                Swal.fire({
+                    title: 'Gestionar Pagos',
+                    html: html,
+                    width: '700px',
+                    showCancelButton: true,
+                    confirmButtonText: 'Cerrar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#6b7280',
+                    reverseButtons: true,
+                    background: isDarkMode() ? '#1e293b' : '#ffffff',
+                    color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                    didOpen: () => {
+                        window.agregarPagoAFactura = async function(factId) {
+                            const descripcion = document.getElementById('nuevo_pago_descripcion').value.trim();
+                            const fecha = document.getElementById('nuevo_pago_fecha').value;
+                            const importe = parseFloat(document.getElementById('nuevo_pago_importe').value) || 0;
+                            const metodo = document.getElementById('nuevo_pago_metodo').value;
+                            
+                            if (!descripcion || importe <= 0) {
+                                Swal.showValidationMessage('Complete la descripción y el importe');
+                                return;
+                            }
+                            
+                            try {
+                                const addResponse = await fetch(`/walee-facturas/${factId}/agregar-pago`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': csrfToken,
+                                    },
+                                    body: JSON.stringify({
+                                        descripcion: descripcion,
+                                        fecha: fecha,
+                                        importe: importe,
+                                        metodo_pago: metodo
+                                    }),
+                                });
+                                
+                                const addData = await addResponse.json();
+                                
+                                if (addData.success) {
+                                    // Limpiar campos
+                                    document.getElementById('nuevo_pago_descripcion').value = '';
+                                    document.getElementById('nuevo_pago_importe').value = '';
+                                    document.getElementById('nuevo_pago_metodo').value = '';
+                                    
+                                    // Recargar pagos
+                                    gestionarPagosFactura(factId, numeroFactura);
+                                } else {
+                                    Swal.showValidationMessage(addData.message || 'Error al agregar pago');
+                                }
+                            } catch (error) {
+                                Swal.showValidationMessage('Error de conexión: ' + error.message);
+                            }
+                        };
+                        
+                        window.eliminarPago = async function(pagoId, factId) {
+                            const result = await Swal.fire({
+                                title: '¿Eliminar pago?',
+                                text: 'Esta acción no se puede deshacer',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Eliminar',
+                                cancelButtonText: 'Cancelar',
+                                confirmButtonColor: '#ef4444',
+                                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                            });
+                            
+                            if (!result.isConfirmed) return;
+                            
+                            try {
+                                const deleteResponse = await fetch(`/walee-facturas/pagos/${pagoId}/eliminar`, {
+                                    method: 'DELETE',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': csrfToken,
+                                    },
+                                });
+                                
+                                const deleteData = await deleteResponse.json();
+                                
+                                if (deleteData.success) {
+                                    gestionarPagosFactura(factId, numeroFactura);
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: deleteData.message || 'Error al eliminar pago',
+                                        confirmButtonColor: '#ef4444',
+                                        background: isDarkMode() ? '#1e293b' : '#ffffff',
+                                        color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                                    });
+                                }
+                            } catch (error) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Error de conexión: ' + error.message,
+                                    confirmButtonColor: '#ef4444',
+                                    background: isDarkMode() ? '#1e293b' : '#ffffff',
+                                    color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                                });
+                            }
+                        };
+                        
+                        window.moverPago = async function(pagoId, facturaOrigenId) {
+                            const facturasOptionsHtml = facturasOptions || '<option value="">No hay otras facturas disponibles</option>';
+                            
+                            const { value: facturaDestinoId } = await Swal.fire({
+                                title: 'Mover Pago',
+                                html: `
+                                    <div class="text-left">
+                                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-3">Selecciona la factura destino:</p>
+                                        <select id="factura_destino" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                                            <option value="">Seleccionar factura...</option>
+                                            ${facturasOptionsHtml}
+                                        </select>
+                                    </div>
+                                `,
+                                showCancelButton: true,
+                                confirmButtonText: 'Mover',
+                                cancelButtonText: 'Cancelar',
+                                confirmButtonColor: '#7c3aed',
+                                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                                preConfirm: () => {
+                                    const destinoId = document.getElementById('factura_destino').value;
+                                    if (!destinoId) {
+                                        Swal.showValidationMessage('Debe seleccionar una factura destino');
+                                        return false;
+                                    }
+                                    return destinoId;
+                                }
+                            });
+                            
+                            if (!facturaDestinoId) return;
+                            
+                            try {
+                                const moveResponse = await fetch(`/walee-facturas/pagos/${pagoId}/mover`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': csrfToken,
+                                    },
+                                    body: JSON.stringify({
+                                        factura_destino_id: facturaDestinoId
+                                    }),
+                                });
+                                
+                                const moveData = await moveResponse.json();
+                                
+                                if (moveData.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Pago Movido',
+                                        text: 'El pago ha sido movido correctamente',
+                                        confirmButtonColor: '#10b981',
+                                        timer: 2000,
+                                        showConfirmButton: false,
+                                        background: isDarkMode() ? '#1e293b' : '#ffffff',
+                                        color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                                    });
+                                    gestionarPagosFactura(facturaOrigenId, numeroFactura);
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: moveData.message || 'Error al mover pago',
+                                        confirmButtonColor: '#ef4444',
+                                        background: isDarkMode() ? '#1e293b' : '#ffffff',
+                                        color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                                    });
+                                }
+                            } catch (error) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Error de conexión: ' + error.message,
+                                    confirmButtonColor: '#ef4444',
+                                    background: isDarkMode() ? '#1e293b' : '#ffffff',
+                                    color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                                });
+                            }
+                        };
+                    }
+                });
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al cargar pagos: ' + error.message,
+                    confirmButtonColor: '#ef4444',
+                    background: isDarkMode() ? '#1e293b' : '#ffffff',
+                    color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                });
+            }
         }
         
         // Datos para modal

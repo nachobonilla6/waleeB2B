@@ -4894,6 +4894,181 @@ Route::delete('/walee-facturas/{id}/eliminar', function ($id) {
     }
 })->middleware(['auth'])->name('walee.facturas.eliminar');
 
+// Obtener pagos de una factura
+Route::get('/walee-facturas/{id}/pagos', function ($id) {
+    try {
+        $factura = \App\Models\Factura::with(['pagos', 'cliente'])->findOrFail($id);
+        
+        return response()->json([
+            'success' => true,
+            'pagos' => $factura->pagos->map(function($pago) {
+                return [
+                    'id' => $pago->id,
+                    'descripcion' => $pago->descripcion,
+                    'fecha' => $pago->fecha->format('Y-m-d'),
+                    'importe' => $pago->importe,
+                    'metodo_pago' => $pago->metodo_pago,
+                    'notas' => $pago->notas,
+                ];
+            }),
+            'factura' => [
+                'id' => $factura->id,
+                'numero_factura' => $factura->numero_factura,
+                'total' => $factura->total,
+                'monto_pagado' => $factura->monto_pagado ?? 0,
+            ]
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.facturas.pagos');
+
+// Agregar pago a una factura
+Route::post('/walee-facturas/{id}/agregar-pago', function ($id, \Illuminate\Http\Request $request) {
+    try {
+        $factura = \App\Models\Factura::findOrFail($id);
+        
+        $pago = \App\Models\FacturaPago::create([
+            'factura_id' => $factura->id,
+            'descripcion' => $request->input('descripcion'),
+            'fecha' => $request->input('fecha', now()),
+            'importe' => $request->input('importe'),
+            'metodo_pago' => $request->input('metodo_pago'),
+            'notas' => $request->input('notas'),
+        ]);
+        
+        // Actualizar monto_pagado de la factura
+        $totalPagos = \App\Models\FacturaPago::where('factura_id', $factura->id)->sum('importe');
+        $factura->monto_pagado = $totalPagos;
+        
+        // Actualizar estado si está completamente pagada
+        if ($factura->monto_pagado >= $factura->total) {
+            $factura->estado = 'pagada';
+        }
+        $factura->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Pago agregado correctamente',
+            'pago' => $pago,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.facturas.agregar-pago');
+
+// Eliminar pago
+Route::delete('/walee-facturas/pagos/{pagoId}/eliminar', function ($pagoId) {
+    try {
+        $pago = \App\Models\FacturaPago::findOrFail($pagoId);
+        $facturaId = $pago->factura_id;
+        $pago->delete();
+        
+        // Actualizar monto_pagado de la factura
+        $factura = \App\Models\Factura::findOrFail($facturaId);
+        $totalPagos = \App\Models\FacturaPago::where('factura_id', $facturaId)->sum('importe');
+        $factura->monto_pagado = $totalPagos;
+        
+        // Actualizar estado si ya no está completamente pagada
+        if ($factura->monto_pagado < $factura->total && $factura->estado === 'pagada') {
+            $factura->estado = 'pendiente';
+        }
+        $factura->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Pago eliminado correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.facturas.pagos.eliminar');
+
+// Mover pago a otra factura
+Route::post('/walee-facturas/pagos/{pagoId}/mover', function ($pagoId, \Illuminate\Http\Request $request) {
+    try {
+        $pago = \App\Models\FacturaPago::findOrFail($pagoId);
+        $facturaOrigenId = $pago->factura_id;
+        $facturaDestinoId = $request->input('factura_destino_id');
+        
+        if (!$facturaDestinoId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Debe especificar la factura destino',
+            ], 400);
+        }
+        
+        $facturaDestino = \App\Models\Factura::findOrFail($facturaDestinoId);
+        
+        // Mover el pago
+        $pago->factura_id = $facturaDestinoId;
+        $pago->save();
+        
+        // Actualizar monto_pagado de la factura origen
+        $facturaOrigen = \App\Models\Factura::findOrFail($facturaOrigenId);
+        $totalPagosOrigen = \App\Models\FacturaPago::where('factura_id', $facturaOrigenId)->sum('importe');
+        $facturaOrigen->monto_pagado = $totalPagosOrigen;
+        if ($facturaOrigen->monto_pagado < $facturaOrigen->total && $facturaOrigen->estado === 'pagada') {
+            $facturaOrigen->estado = 'pendiente';
+        }
+        $facturaOrigen->save();
+        
+        // Actualizar monto_pagado de la factura destino
+        $totalPagosDestino = \App\Models\FacturaPago::where('factura_id', $facturaDestinoId)->sum('importe');
+        $facturaDestino->monto_pagado = $totalPagosDestino;
+        if ($facturaDestino->monto_pagado >= $facturaDestino->total) {
+            $facturaDestino->estado = 'pagada';
+        }
+        $facturaDestino->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Pago movido correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.facturas.pagos.mover');
+
+// Obtener lista de facturas para mover pagos
+Route::get('/walee-facturas/lista-facturas', function () {
+    try {
+        $facturas = \App\Models\Factura::with('cliente')
+            ->orderBy('numero_factura', 'desc')
+            ->get()
+            ->map(function($factura) {
+                return [
+                    'id' => $factura->id,
+                    'numero_factura' => $factura->numero_factura,
+                    'cliente_nombre' => $factura->cliente?->nombre_empresa ?? 'Sin cliente',
+                    'total' => $factura->total,
+                ];
+            });
+        
+        return response()->json([
+            'success' => true,
+            'facturas' => $facturas,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.facturas.lista-facturas');
+
 Route::get('/walee-facturas/{id}/pdf', function ($id) {
     try {
         $factura = \App\Models\Factura::with(['cliente', 'items', 'pagos'])->findOrFail($id);

@@ -327,35 +327,50 @@
                             <div class="sm:col-span-2">
                                 <label class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Información:</label>
                                 <div class="space-y-2">
-                                    @php
-                                        $informacionData = [];
-                                        if ($supplier->informacion) {
-                                            try {
-                                                $informacionData = json_decode($supplier->informacion, true);
-                                                if (!is_array($informacionData)) {
-                                                    $informacionData = [];
-                                                }
-                                            } catch (\Exception $e) {
-                                                $informacionData = [];
-                                            }
-                                        }
-                                    @endphp
-                                    <div>
-                                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Service consomateur</label>
-                                        <p class="text-sm font-semibold text-slate-900 dark:text-white">{{ $informacionData['service_consomateur'] ?? 'N/A' }}</p>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Recetter ou outre</label>
-                                        <p class="text-sm font-semibold text-slate-900 dark:text-white">{{ $informacionData['recetter_ou_outre'] ?? 'N/A' }}</p>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Tracabilidad</label>
-                                        <p class="text-sm font-semibold text-slate-900 dark:text-white">{{ $informacionData['tracabilidad'] ?? 'N/A' }}</p>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Inform et valorise le produit</label>
-                                        <p class="text-sm font-semibold text-slate-900 dark:text-white">{{ $informacionData['inform_et_valorise'] ?? 'N/A' }}</p>
-                                    </div>
+                                    <button onclick="openSubscribeModal()" class="w-full p-3 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center gap-2">
+                                                <svg class="w-5 h-5 text-slate-400 group-hover:text-walee-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                                </svg>
+                                                <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Service consomateur</span>
+                                            </div>
+                                            <span class="text-xs text-slate-400 dark:text-slate-500">🔒 Premium</span>
+                                        </div>
+                                    </button>
+                                    <button onclick="openSubscribeModal()" class="w-full p-3 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center gap-2">
+                                                <svg class="w-5 h-5 text-slate-400 group-hover:text-walee-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                                </svg>
+                                                <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Recetter ou outre</span>
+                                            </div>
+                                            <span class="text-xs text-slate-400 dark:text-slate-500">🔒 Premium</span>
+                                        </div>
+                                    </button>
+                                    <button onclick="openSubscribeModal()" class="w-full p-3 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center gap-2">
+                                                <svg class="w-5 h-5 text-slate-400 group-hover:text-walee-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                                </svg>
+                                                <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Tracabilidad</span>
+                                            </div>
+                                            <span class="text-xs text-slate-400 dark:text-slate-500">🔒 Premium</span>
+                                        </div>
+                                    </button>
+                                    <button onclick="openSubscribeModal()" class="w-full p-3 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center gap-2">
+                                                <svg class="w-5 h-5 text-slate-400 group-hover:text-walee-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                                </svg>
+                                                <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Inform et valorise le produit</span>
+                                            </div>
+                                            <span class="text-xs text-slate-400 dark:text-slate-500">🔒 Premium</span>
+                                        </div>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -1294,36 +1309,8 @@
                 telefono_1: @json($supplier->telefono_1 ?? ''),
                 telefono_2: @json($supplier->telefono_2 ?? ''),
                 address: @json($supplier->address ?? $supplier->direccion ?? ''),
-                contacto_empresa: @json($supplier->contacto_empresa ?? ''),
-                informacion: @json($supplier->informacion ?? ''),
-                foto_url: @json($fotoUrl ?? '')
+                contacto_empresa: @json($supplier->contacto_empresa ?? '')
             };
-            
-            // Parsear información si existe (puede ser un objeto JSON o string)
-            let informacionData = {
-                service_consomateur: '',
-                recetter_ou_outre: '',
-                tracabilidad: '',
-                inform_et_valorise: ''
-            };
-            
-            if (supplier.informacion) {
-                try {
-                    if (typeof supplier.informacion === 'string') {
-                        const parsed = JSON.parse(supplier.informacion);
-                        informacionData = { ...informacionData, ...parsed };
-                    } else if (typeof supplier.informacion === 'object') {
-                        informacionData = { ...informacionData, ...supplier.informacion };
-                    }
-                } catch (e) {
-                    // Si no es JSON válido, intentar parsear como string separado por comas (formato antiguo)
-                    const parts = supplier.informacion.split(',');
-                    if (parts.length >= 1) informacionData.service_consomateur = parts[0].trim();
-                    if (parts.length >= 2) informacionData.recetter_ou_outre = parts[1].trim();
-                    if (parts.length >= 3) informacionData.tracabilidad = parts[2].trim();
-                    if (parts.length >= 4) informacionData.inform_et_valorise = parts[3].trim();
-                }
-            }
             
             const isDarkMode = document.documentElement.classList.contains('dark');
             
@@ -1359,47 +1346,55 @@
                             </div>
                         </div>
                         <div class="mt-3">
-                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Información:</label>
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Información: <span class="text-walee-500">🔒 Premium</span></label>
                             <div class="space-y-2">
-                                <div>
-                                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Service consomateur</label>
-                                    <input type="text" id="infoServiceConsomateur" 
-                                           value="${informacionData.service_consomateur || ''}"
-                                           class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500"
-                                           placeholder="Service consomateur">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Recetter ou outre</label>
-                                    <input type="text" id="infoRecetterOuOutre"
-                                           value="${informacionData.recetter_ou_outre || ''}"
-                                           class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500"
-                                           placeholder="Recetter ou outre">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Tracabilidad</label>
-                                    <input type="text" id="infoTracabilidad"
-                                           value="${informacionData.tracabilidad || ''}"
-                                           class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500"
-                                           placeholder="Tracabilidad">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Inform et valorise le produit</label>
-                                    <input type="text" id="infoInformEtValorise"
-                                           value="${informacionData.inform_et_valorise || ''}"
-                                           class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500"
-                                           placeholder="Inform et valorise le produit">
-                                </div>
+                                <button type="button" onclick="openSubscribeModal()" class="w-full p-2 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group text-left">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Service consomateur</span>
+                                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                        </svg>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="openSubscribeModal()" class="w-full p-2 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group text-left">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Recetter ou outre</span>
+                                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                        </svg>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="openSubscribeModal()" class="w-full p-2 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group text-left">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Tracabilidad</span>
+                                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                        </svg>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="openSubscribeModal()" class="w-full p-2 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group text-left">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Inform et valorise le produit</span>
+                                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                        </svg>
+                                    </div>
+                                </button>
                             </div>
                         </div>
                         <div class="mt-3">
-                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Photo</label>
-                            ${supplier.foto_url ? `
-                            <div class="mb-2">
-                                <img src="${supplier.foto_url}" alt="Current photo" class="w-20 h-20 object-cover rounded-lg border border-slate-300 dark:border-slate-600">
-                            </div>
-                            ` : ''}
-                            <input type="file" id="profileFoto" name="foto" accept="image/*" class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Optional: Upload a new photo</p>
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Photo <span class="text-walee-500">🔒 Premium</span></label>
+                            <button type="button" onclick="openSubscribeModal()" class="w-full p-3 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group">
+                                <div class="flex items-center justify-center gap-2">
+                                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Upload photo (Premium Feature)</span>
+                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                    </svg>
+                                </div>
+                            </button>
                         </div>
                     </form>
                 `,
@@ -1429,15 +1424,6 @@
                         Swal.showValidationMessage('Name is required');
                         return false;
                     }
-                    const foto = document.getElementById('profileFoto').files[0];
-                    
-                    // Recopilar información de los campos de texto
-                    const informacionData = {
-                        service_consomateur: document.getElementById('infoServiceConsomateur').value.trim(),
-                        recetter_ou_outre: document.getElementById('infoRecetterOuOutre').value.trim(),
-                        tracabilidad: document.getElementById('infoTracabilidad').value.trim(),
-                        inform_et_valorise: document.getElementById('infoInformEtValorise').value.trim()
-                    };
                     
                     return {
                         name: name,
@@ -1445,9 +1431,7 @@
                         telefono_1: document.getElementById('profileTelefono1').value,
                         telefono_2: document.getElementById('profileTelefono2').value,
                         address: document.getElementById('profileAddress').value,
-                        contacto_empresa: document.getElementById('profileContactoEmpresa').value,
-                        informacion: JSON.stringify(informacionData),
-                        foto: foto
+                        contacto_empresa: document.getElementById('profileContactoEmpresa').value
                     };
                 }
             }).then((result) => {
@@ -1462,19 +1446,28 @@
             const isDarkMode = document.documentElement.classList.contains('dark');
             
             Swal.fire({
-                title: 'Subscribe for More Features',
+                title: '🔒 Características Premium',
                 html: `
-                    <div class="text-center py-4">
+                    <div class="text-left py-4">
                         <p class="text-sm text-slate-700 dark:text-slate-300 mb-4">
-                            Unlock access to all features by subscribing to our premium plan.
+                            Esta característica está disponible solo para usuarios premium. Suscríbete para desbloquear:
                         </p>
-                        <a href="{{ route('suscribe') }}" 
-                           class="inline-flex items-center gap-2 px-6 py-3 bg-walee-500 hover:bg-walee-600 text-white rounded-lg font-medium transition-colors shadow-md hover:shadow-lg">
-                            <span>Subscribe Now</span>
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                            </svg>
-                        </a>
+                        <ul class="text-sm text-slate-600 dark:text-slate-400 mb-4 space-y-2 list-disc list-inside">
+                            <li>Service consomateur</li>
+                            <li>Recetter ou outre</li>
+                            <li>Tracabilidad</li>
+                            <li>Inform et valorise le produit</li>
+                            <li>Subir foto de perfil</li>
+                        </ul>
+                        <div class="text-center">
+                            <a href="{{ route('suscribe') }}" 
+                               class="inline-flex items-center gap-2 px-6 py-3 bg-walee-500 hover:bg-walee-600 text-white rounded-lg font-medium transition-colors shadow-md hover:shadow-lg">
+                                <span>Suscribirse Ahora</span>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                </svg>
+                            </a>
+                        </div>
                     </div>
                 `,
                 showConfirmButton: false,
@@ -1505,11 +1498,6 @@
                 formData.append('telefono_2', data.telefono_2 || '');
                 formData.append('address', data.address || '');
                 formData.append('contacto_empresa', data.contacto_empresa || '');
-                formData.append('informacion', data.informacion || '');
-                
-                if (data.foto) {
-                    formData.append('foto', data.foto);
-                }
                 
                 const response = await fetch('{{ route("walee.supplier.public.update", $supplier->id) }}', {
                     method: 'POST',

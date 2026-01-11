@@ -306,7 +306,7 @@
                                             <img 
                                                 src="{{ $qrSuperUrl }}" 
                                                 alt="QR Code Clientes" 
-                                                class="w-12 h-12 object-cover rounded border-4 border-pink-300 dark:border-pink-600 mx-auto cursor-pointer"
+                                                class="w-12 h-12 object-cover rounded border-8 border-pink-300 dark:border-pink-600 mx-auto cursor-pointer"
                                                 onclick="showQRModal('{{ $qrSuperUrl }}')"
                                                 onerror="this.style.display='none';"
                                             >

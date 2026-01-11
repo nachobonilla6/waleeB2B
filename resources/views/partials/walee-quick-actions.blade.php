@@ -107,41 +107,56 @@
                 }
                 
                 Swal.fire({
-                    title: '🔒 Características Premium',
+                    title: '<div style="font-size: 1.5rem; font-weight: 700; color: ' + (isDarkMode ? '#e2e8f0' : '#1e293b') + ';">🔒 Características Premium</div>',
                     html: `
-                        <div class="text-left py-4">
-                            <p class="text-sm text-slate-700 dark:text-slate-300 mb-4">
+                        <div style="text-align: left; padding: 1rem 0; color: ${isDarkMode ? '#cbd5e1' : '#475569'};">
+                            <p style="font-size: 0.875rem; margin-bottom: 1rem; color: ${isDarkMode ? '#e2e8f0' : '#334155'};">
                                 Esta característica está disponible solo para usuarios premium. Suscríbete para desbloquear:
                             </p>
-                            <ul class="text-sm text-slate-600 dark:text-slate-400 mb-4 space-y-2 list-disc list-inside">
-                                <li>WhatsApp</li>
-                                <li>Company</li>
-                                <li>Manager</li>
+                            <ul style="font-size: 0.875rem; margin-bottom: 1.5rem; padding-left: 1.5rem; list-style-type: disc; color: ${isDarkMode ? '#cbd5e1' : '#64748b'};">
+                                <li style="margin-bottom: 0.5rem;">WhatsApp</li>
+                                <li style="margin-bottom: 0.5rem;">Company</li>
+                                <li style="margin-bottom: 0.5rem;">Manager</li>
                             </ul>
-                            <div class="text-center">
+                            <div style="text-align: center; margin-top: 1.5rem;">
                                 <a href="{{ route('suscribe') }}" 
-                                   class="inline-flex items-center gap-2 px-6 py-3 bg-walee-500 hover:bg-walee-600 text-white rounded-lg font-medium transition-colors shadow-md hover:shadow-lg">
+                                   style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background-color: #D59F3B; color: white; border-radius: 0.5rem; font-weight: 500; text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);"
+                                   onmouseover="this.style.backgroundColor='#C78F2E'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)';"
+                                   onmouseout="this.style.backgroundColor='#D59F3B'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)';">
                                     <span>Suscribirse Ahora</span>
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                                     </svg>
                                 </a>
                             </div>
                         </div>
                     `,
+                    width: '500px',
+                    padding: '2rem',
+                    background: isDarkMode ? '#1e293b' : '#ffffff',
+                    color: isDarkMode ? '#e2e8f0' : '#1e293b',
                     showConfirmButton: false,
                     showCancelButton: true,
-                    cancelButtonText: 'Close',
+                    cancelButtonText: 'Cerrar',
                     cancelButtonColor: '#6b7280',
+                    cancelButtonAriaLabel: 'Cerrar modal',
+                    backdrop: true,
+                    allowOutsideClick: true,
+                    allowEscapeKey: true,
                     customClass: {
-                        popup: isDarkMode ? 'dark-swal' : 'light-swal',
-                        htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html'
+                        popup: isDarkMode ? 'dark-swal-popup' : 'light-swal-popup',
+                        htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                        cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
                     },
                     didOpen: () => {
                         const popup = Swal.getPopup();
-                        if (isDarkMode && popup) {
-                            popup.style.backgroundColor = '#0f172a';
-                            popup.style.color = '#e2e8f0';
+                        if (popup) {
+                            popup.style.backgroundColor = isDarkMode ? '#1e293b' : '#ffffff';
+                            popup.style.color = isDarkMode ? '#e2e8f0' : '#1e293b';
+                            popup.style.borderRadius = '1rem';
+                            popup.style.boxShadow = isDarkMode 
+                                ? '0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.2)'
+                                : '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
                         }
                     }
                 });

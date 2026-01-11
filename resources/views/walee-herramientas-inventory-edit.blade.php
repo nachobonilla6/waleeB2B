@@ -471,20 +471,20 @@
                                         <span>Generar QR Super</span>
                                     </button>
                                 </div>
-                                @if($producto->foto_qr_super)
-                                    @php
-                                        $qrSuperPath = trim($producto->foto_qr_super);
-                                        if (str_starts_with($qrSuperPath, 'http://') || str_starts_with($qrSuperPath, 'https://')) {
-                                            $qrSuperUrl = $qrSuperPath;
-                                        } else {
-                                            $filename = basename($qrSuperPath);
-                                            if (strpos($qrSuperPath, 'productos-super/qr-super/') !== false || strpos($qrSuperPath, 'qr-super/') !== false) {
-                                                $qrSuperUrl = route('storage.productos-super.qr', ['filename' => $filename]);
+                                    @if($producto->foto_qr_super)
+                                        @php
+                                            $qrSuperPath = trim($producto->foto_qr_super);
+                                            if (str_starts_with($qrSuperPath, 'http://') || str_starts_with($qrSuperPath, 'https://')) {
+                                                $qrSuperUrl = $qrSuperPath;
                                             } else {
-                                                $qrSuperUrl = route('storage.productos-super.qr', ['filename' => $filename]);
+                                                $filename = basename($qrSuperPath);
+                                                if (strpos($qrSuperPath, 'productos-super/qr-super/') !== false || strpos($qrSuperPath, 'qr-super/') !== false) {
+                                                    $qrSuperUrl = route('storage.productos-super.qr-super', ['filename' => $filename]);
+                                                } else {
+                                                    $qrSuperUrl = route('storage.productos-super.qr-super', ['filename' => $filename]);
+                                                }
                                             }
-                                        }
-                                    @endphp
+                                        @endphp
                                     <div class="mt-2 relative inline-block">
                                         <img src="{{ $qrSuperUrl }}" alt="Current QR Super" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentQrSuperPreview" onerror="console.error('Error loading QR Super image:', this.src); this.style.display='none';">
                                         <button 

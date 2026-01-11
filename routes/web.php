@@ -406,6 +406,71 @@ Route::get('/storage/productos-super/qr/{filename}', function ($filename) {
     }
 })->where('filename', '.*')->name('storage.productos-super.qr');
 
+// Ruta para servir QR Super de productos (pública, sin autenticación)
+Route::get('/storage/productos-super/qr-super/{filename}', function ($filename) {
+    try {
+        // Limpiar el nombre del archivo para seguridad
+        $filename = basename($filename);
+        $filename = preg_replace('/[^a-zA-Z0-9._-]/', '', $filename);
+        
+        if (empty($filename)) {
+            abort(404, 'Nombre de archivo inválido');
+        }
+        
+        $path = storage_path('app/public/productos-super/qr-super/' . $filename);
+        
+        if (!file_exists($path) || !is_file($path)) {
+            abort(404, 'Archivo QR Super no encontrado: ' . $filename);
+        }
+        
+        // Leer el archivo
+        $file = @file_get_contents($path);
+        if ($file === false) {
+            abort(500, 'Error al leer archivo QR Super');
+        }
+        
+        // Obtener el tipo MIME
+        $type = 'image/jpeg'; // Default
+        if (function_exists('mime_content_type')) {
+            $detectedType = @mime_content_type($path);
+            if ($detectedType !== false) {
+                $type = $detectedType;
+            }
+        } elseif (function_exists('finfo_file')) {
+            $finfo = @finfo_open(FILEINFO_MIME_TYPE);
+            if ($finfo !== false) {
+                $detectedType = @finfo_file($finfo, $path);
+                if ($detectedType !== false) {
+                    $type = $detectedType;
+                }
+                @finfo_close($finfo);
+            }
+        }
+        
+        // Obtener el tamaño del archivo
+        $fileSize = @filesize($path);
+        if ($fileSize === false) {
+            $fileSize = strlen($file);
+        }
+        
+        return response($file, 200)
+            ->header('Content-Type', $type)
+            ->header('Content-Length', $fileSize)
+            ->header('Cache-Control', 'public, max-age=31536000')
+            ->header('Access-Control-Allow-Origin', '*');
+    } catch (\Illuminate\Http\Exceptions\HttpResponseException $e) {
+        // Re-lanzar excepciones HTTP (404, 500, etc.)
+        throw $e;
+    } catch (\Exception $e) {
+        \Log::error('Error al servir archivo QR Super de producto super', [
+            'filename' => $filename ?? 'unknown',
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        abort(500, 'Error al servir archivo QR Super: ' . $e->getMessage());
+    }
+})->where('filename', '.*')->name('storage.productos-super.qr-super');
+
 // Ruta para servir fotos de clientes (pública, sin autenticación)
 Route::get('/storage/clientes/{filename}', function ($filename) {
     try {

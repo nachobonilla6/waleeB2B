@@ -477,12 +477,15 @@
                                             if (str_starts_with($qrSuperPath, 'http://') || str_starts_with($qrSuperPath, 'https://')) {
                                                 $qrSuperUrl = $qrSuperPath;
                                             } else {
-                                                // Si el path contiene 'productos-super/qr-super/', usar asset directamente
+                                                // Extraer solo el nombre del archivo
+                                                $filename = basename($qrSuperPath);
+                                                
+                                                // Si el path contiene 'qr-super', usar la ruta específica para QR Super
                                                 if (strpos($qrSuperPath, 'productos-super/qr-super/') !== false || strpos($qrSuperPath, 'qr-super/') !== false) {
-                                                    $qrSuperUrl = asset('storage/' . $qrSuperPath);
+                                                    // Usar la ruta específica para QR Super
+                                                    $qrSuperUrl = route('storage.productos-super.qr-super', ['filename' => $filename]);
                                                 } else {
-                                                    // Si solo tiene el nombre del archivo, extraerlo y usar la ruta
-                                                    $filename = basename($qrSuperPath);
+                                                    // Si solo tiene el nombre del archivo, asumir que está en qr-super/
                                                     $qrSuperUrl = route('storage.productos-super.qr-super', ['filename' => $filename]);
                                                 }
                                             }

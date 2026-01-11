@@ -694,6 +694,7 @@
                 title: 'Delete Product?',
                 text: 'This action cannot be undone',
                 icon: 'warning',
+                iconColor: '#D59F3B',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, delete',
                 cancelButtonText: 'Cancel',

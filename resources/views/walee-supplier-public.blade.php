@@ -324,6 +324,25 @@
                                 <label class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Company Contact</label>
                                 <p class="text-sm font-semibold text-slate-900 dark:text-white">{{ $supplier->contacto_empresa ?? 'N/A' }}</p>
                             </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Información:</label>
+                                <div class="flex flex-wrap gap-2">
+                                    @if($supplier->informacion)
+                                        @php
+                                            $informacionArray = explode(',', $supplier->informacion);
+                                        @endphp
+                                        @foreach($informacionArray as $info)
+                                            @if(trim($info))
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-walee-100 dark:bg-walee-500/20 text-walee-700 dark:text-walee-300">
+                                                    {{ trim($info) }}
+                                                </span>
+                                            @endif
+                                        @endforeach
+                                    @else
+                                        <span class="text-sm text-slate-500 dark:text-slate-400">N/A</span>
+                                    @endif
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1261,8 +1280,19 @@
                 telefono_2: @json($supplier->telefono_2 ?? ''),
                 address: @json($supplier->address ?? $supplier->direccion ?? ''),
                 contacto_empresa: @json($supplier->contacto_empresa ?? ''),
+                informacion: @json($supplier->informacion ?? ''),
                 foto_url: @json($fotoUrl ?? '')
             };
+            
+            // Parsear información si existe (puede ser un string separado por comas o un array)
+            let informacionArray = [];
+            if (supplier.informacion) {
+                if (typeof supplier.informacion === 'string') {
+                    informacionArray = supplier.informacion.split(',').map(item => item.trim());
+                } else if (Array.isArray(supplier.informacion)) {
+                    informacionArray = supplier.informacion;
+                }
+            }
             
             const isDarkMode = document.documentElement.classList.contains('dark');
             
@@ -1295,6 +1325,35 @@
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Company Contact</label>
                                 <input type="text" id="profileContactoEmpresa" name="contacto_empresa" value="${supplier.contacto_empresa}" class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Información:</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="infoServiceConsomateur" value="Service consomateur" 
+                                           ${informacionArray.includes('Service consomateur') ? 'checked' : ''}
+                                           class="rounded border-slate-300 dark:border-slate-600 text-walee-500 focus:ring-walee-500">
+                                    <span class="text-xs text-slate-700 dark:text-slate-300">Service consomateur</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="infoRecetterOuOutre" value="Recetter ou outre"
+                                           ${informacionArray.includes('Recetter ou outre') ? 'checked' : ''}
+                                           class="rounded border-slate-300 dark:border-slate-600 text-walee-500 focus:ring-walee-500">
+                                    <span class="text-xs text-slate-700 dark:text-slate-300">Recetter ou outre</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="infoTracabilidad" value="Tracabilidad"
+                                           ${informacionArray.includes('Tracabilidad') ? 'checked' : ''}
+                                           class="rounded border-slate-300 dark:border-slate-600 text-walee-500 focus:ring-walee-500">
+                                    <span class="text-xs text-slate-700 dark:text-slate-300">Tracabilidad</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="infoInformEtValorise" value="Inform et valorise le produit"
+                                           ${informacionArray.includes('Inform et valorise le produit') ? 'checked' : ''}
+                                           class="rounded border-slate-300 dark:border-slate-600 text-walee-500 focus:ring-walee-500">
+                                    <span class="text-xs text-slate-700 dark:text-slate-300">Inform et valorise le produit</span>
+                                </label>
                             </div>
                         </div>
                         <div class="mt-3">
@@ -1336,6 +1395,22 @@
                         return false;
                     }
                     const foto = document.getElementById('profileFoto').files[0];
+                    
+                    // Recopilar información seleccionada
+                    const informacionSeleccionada = [];
+                    if (document.getElementById('infoServiceConsomateur').checked) {
+                        informacionSeleccionada.push('Service consomateur');
+                    }
+                    if (document.getElementById('infoRecetterOuOutre').checked) {
+                        informacionSeleccionada.push('Recetter ou outre');
+                    }
+                    if (document.getElementById('infoTracabilidad').checked) {
+                        informacionSeleccionada.push('Tracabilidad');
+                    }
+                    if (document.getElementById('infoInformEtValorise').checked) {
+                        informacionSeleccionada.push('Inform et valorise le produit');
+                    }
+                    
                     return {
                         name: name,
                         email: document.getElementById('profileEmail').value,
@@ -1343,6 +1418,7 @@
                         telefono_2: document.getElementById('profileTelefono2').value,
                         address: document.getElementById('profileAddress').value,
                         contacto_empresa: document.getElementById('profileContactoEmpresa').value,
+                        informacion: informacionSeleccionada.join(', '),
                         foto: foto
                     };
                 }
@@ -1401,6 +1477,7 @@
                 formData.append('telefono_2', data.telefono_2 || '');
                 formData.append('address', data.address || '');
                 formData.append('contacto_empresa', data.contacto_empresa || '');
+                formData.append('informacion', data.informacion || '');
                 
                 if (data.foto) {
                     formData.append('foto', data.foto);

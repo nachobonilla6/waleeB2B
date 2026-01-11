@@ -6927,6 +6927,9 @@ Route::post('/walee-supplier/{id}/public/update', function (\Illuminate\Http\Req
     if ($request->has('contacto_empresa')) {
         $supplier->contacto_empresa = $request->input('contacto_empresa');
     }
+    if ($request->has('informacion')) {
+        $supplier->informacion = $request->input('informacion');
+    }
     if ($request->has('nota')) {
         $supplier->nota = $request->input('nota');
     }

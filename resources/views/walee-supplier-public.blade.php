@@ -325,6 +325,71 @@
                                 <p class="text-sm font-semibold text-slate-900 dark:text-white">{{ $supplier->contacto_empresa ?? 'N/A' }}</p>
                             </div>
                         </div>
+                        
+                        <!-- Información bloqueada -->
+                        <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                            <label class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Información: <span class="text-walee-500">🔒 Premium</span></label>
+                            <div class="space-y-2">
+                                <button onclick="openSubscribeModal()" class="w-full p-3 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-5 h-5 text-slate-400 group-hover:text-walee-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                            </svg>
+                                            <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Service consomateur</span>
+                                        </div>
+                                        <span class="text-xs text-slate-400 dark:text-slate-500">🔒 Premium</span>
+                                    </div>
+                                </button>
+                                <button onclick="openSubscribeModal()" class="w-full p-3 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-5 h-5 text-slate-400 group-hover:text-walee-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                            </svg>
+                                            <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Recetter ou outre</span>
+                                        </div>
+                                        <span class="text-xs text-slate-400 dark:text-slate-500">🔒 Premium</span>
+                                    </div>
+                                </button>
+                                <button onclick="openSubscribeModal()" class="w-full p-3 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-5 h-5 text-slate-400 group-hover:text-walee-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                            </svg>
+                                            <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Tracabilidad</span>
+                                        </div>
+                                        <span class="text-xs text-slate-400 dark:text-slate-500">🔒 Premium</span>
+                                    </div>
+                                </button>
+                                <button onclick="openSubscribeModal()" class="w-full p-3 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-5 h-5 text-slate-400 group-hover:text-walee-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                            </svg>
+                                            <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Inform et valorise le produit</span>
+                                        </div>
+                                        <span class="text-xs text-slate-400 dark:text-slate-500">🔒 Premium</span>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Photo bloqueada -->
+                        <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                            <label class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Photo: <span class="text-walee-500">🔒 Premium</span></label>
+                            <button onclick="openSubscribeModal()" class="w-full p-4 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group">
+                                <div class="flex flex-col items-center justify-center gap-2">
+                                    <svg class="w-8 h-8 text-slate-400 group-hover:text-walee-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Upload photo (Premium Feature)</span>
+                                    <span class="text-xs text-slate-400 dark:text-slate-500">🔒 Premium</span>
+                                </div>
+                            </button>
+                        </div>
                     </div>
                 </div>
             @endif

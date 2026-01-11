@@ -431,16 +431,32 @@ Route::get('/storage/productos-super/qr-super/{filename}', function ($filename) 
             'path_exists' => file_exists($path),
             'is_file' => is_file($path),
             'is_readable' => is_readable($path),
-            'directory_exists' => is_dir(dirname($path))
+            'directory_exists' => is_dir(dirname($path)),
+            'directory_permissions' => is_dir(dirname($path)) ? substr(sprintf('%o', fileperms(dirname($path))), -4) : 'N/A'
         ]);
         
-        if (!file_exists($path) || !is_file($path)) {
+        if (!file_exists($path)) {
+            \Log::error('Archivo QR Super no existe', ['path' => $path]);
             abort(404, 'Archivo QR Super no encontrado: ' . $filename);
+        }
+        
+        if (!is_file($path)) {
+            \Log::error('Path QR Super no es un archivo', ['path' => $path]);
+            abort(404, 'Archivo QR Super no encontrado: ' . $filename);
+        }
+        
+        if (!is_readable($path)) {
+            \Log::error('Archivo QR Super no es legible', ['path' => $path, 'permissions' => substr(sprintf('%o', fileperms($path)), -4)]);
+            abort(500, 'Archivo QR Super no es legible');
         }
         
         // Leer el archivo
         $file = @file_get_contents($path);
         if ($file === false) {
+            \Log::error('Error al leer archivo QR Super', [
+                'path' => $path,
+                'error' => error_get_last()
+            ]);
             abort(500, 'Error al leer archivo QR Super');
         }
         

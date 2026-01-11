@@ -56,6 +56,7 @@
                 </svg>
             </div>
             <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Inventory</span>
+            <span class="text-xs text-slate-500 dark:text-slate-400 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors">DLC DLV</span>
         </a>
         
         <!-- WhatsApp (Bloqueado) -->

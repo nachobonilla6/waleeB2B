@@ -1634,8 +1634,8 @@
                 Swal.close();
                 Swal.fire({
                     icon: 'success',
-                    title: '¡QR Code Super Generado!',
-                    text: 'El código QR Super ha sido generado exitosamente',
+                    title: '¡QR Clientes Generado!',
+                    text: 'El código QR Clientes ha sido generado exitosamente',
                     timer: 2000,
                     showConfirmButton: false
                 });

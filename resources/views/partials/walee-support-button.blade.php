@@ -763,6 +763,13 @@ EN<!-- Botón Flotante Principal -->
         document.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById('supportModal');
             if (modal) {
+                // Asegurar que el modal esté cerrado al cargar la página
+                // Especialmente en rutas de cliente/supplier donde no debe abrirse automáticamente
+                const currentPath = window.location.pathname;
+                if (currentPath.includes('/walee-cliente/') || currentPath.includes('/walee-supplier/')) {
+                    modal.classList.add('hidden');
+                }
+                
                 modal.addEventListener('click', function(e) {
                     if (e.target === this) closeSupportModal();
                 });

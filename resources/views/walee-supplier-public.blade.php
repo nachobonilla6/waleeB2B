@@ -377,7 +377,7 @@
             Swal.fire({
                 title: 'Note',
                 html: `
-                    <textarea id="notaText" rows="8" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="Add a note...">${nota}</textarea>
+                    <textarea id="notaText" rows="8" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="Add a note..."></textarea>
                 `,
                 showCancelButton: true,
                 confirmButtonText: 'Save',
@@ -392,6 +392,11 @@
                     if (isDarkMode) {
                         popup.style.backgroundColor = '#0f172a';
                         popup.style.color = '#e2e8f0';
+                    }
+                    // Establecer el valor de la nota después de que el modal se abre
+                    const notaTextarea = document.getElementById('notaText');
+                    if (notaTextarea && nota) {
+                        notaTextarea.value = nota;
                     }
                 },
                 preConfirm: () => {

@@ -589,7 +589,7 @@
                                             </button>
                                         </div>
                                         <div id="fotoQrSuperPreview" class="mt-1 hidden">
-                                            <img id="fotoQrSuperPreviewImg" src="" alt="Preview QR Code Clientes" class="w-16 h-16 object-cover rounded border border-pink-300 dark:border-pink-600">
+                                            <img id="fotoQrSuperPreviewImg" src="" alt="Preview QR Code Clientes" class="w-16 h-16 object-cover rounded border-4 border-pink-300 dark:border-pink-600">
                                         </div>
                                     </div>
                                 </div>
@@ -807,7 +807,7 @@
                                                             <img 
                                                                 src="{{ $qrSuperUrl }}" 
                                                                 alt="QR Code Clientes {{ $producto->nombre }}" 
-                                                                class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border border-pink-300 dark:border-pink-600 shadow-sm"
+                                                                class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border-4 border-pink-300 dark:border-pink-600 shadow-sm"
                                                                 loading="lazy"
                                                                 title="QR Code Clientes"
                                                             >

@@ -324,55 +324,6 @@
                                 <label class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Company Contact</label>
                                 <p class="text-sm font-semibold text-slate-900 dark:text-white">{{ $supplier->contacto_empresa ?? 'N/A' }}</p>
                             </div>
-                            <div class="sm:col-span-2">
-                                <label class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Información:</label>
-                                <div class="space-y-2">
-                                    <button onclick="openSubscribeModal()" class="w-full p-3 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group">
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center gap-2">
-                                                <svg class="w-5 h-5 text-slate-400 group-hover:text-walee-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                                                </svg>
-                                                <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Service consomateur</span>
-                                            </div>
-                                            <span class="text-xs text-slate-400 dark:text-slate-500">🔒 Premium</span>
-                                        </div>
-                                    </button>
-                                    <button onclick="openSubscribeModal()" class="w-full p-3 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group">
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center gap-2">
-                                                <svg class="w-5 h-5 text-slate-400 group-hover:text-walee-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                                                </svg>
-                                                <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Recetter ou outre</span>
-                                            </div>
-                                            <span class="text-xs text-slate-400 dark:text-slate-500">🔒 Premium</span>
-                                        </div>
-                                    </button>
-                                    <button onclick="openSubscribeModal()" class="w-full p-3 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group">
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center gap-2">
-                                                <svg class="w-5 h-5 text-slate-400 group-hover:text-walee-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                                                </svg>
-                                                <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Tracabilidad</span>
-                                            </div>
-                                            <span class="text-xs text-slate-400 dark:text-slate-500">🔒 Premium</span>
-                                        </div>
-                                    </button>
-                                    <button onclick="openSubscribeModal()" class="w-full p-3 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group">
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center gap-2">
-                                                <svg class="w-5 h-5 text-slate-400 group-hover:text-walee-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                                                </svg>
-                                                <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Inform et valorise le produit</span>
-                                            </div>
-                                            <span class="text-xs text-slate-400 dark:text-slate-500">🔒 Premium</span>
-                                        </div>
-                                    </button>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -841,9 +792,55 @@
                         </div>
                         ` : ''}
                         <div>
-                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Image</label>
-                            <input type="file" id="editProductImage" name="imagen" accept="image/*"
-                                   class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Image <span class="text-walee-500">🔒 Premium</span></label>
+                            <button type="button" onclick="openSubscribeModal()" class="w-full p-2 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group">
+                                <div class="flex items-center justify-center gap-2">
+                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Upload image (Premium Feature)</span>
+                                    <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                    </svg>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="mt-3">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Información: <span class="text-walee-500">🔒 Premium</span></label>
+                            <div class="space-y-2">
+                                <button type="button" onclick="openSubscribeModal()" class="w-full p-2 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group text-left">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Service consomateur</span>
+                                        <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                        </svg>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="openSubscribeModal()" class="w-full p-2 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group text-left">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Recetter ou outre</span>
+                                        <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                        </svg>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="openSubscribeModal()" class="w-full p-2 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group text-left">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Tracabilidad</span>
+                                        <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                        </svg>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="openSubscribeModal()" class="w-full p-2 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group text-left">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Inform et valorise le produit</span>
+                                        <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                        </svg>
+                                    </div>
+                                </button>
+                            </div>
                         </div>
                     </form>
                 `,
@@ -1033,10 +1030,55 @@
                                       placeholder="Product description"></textarea>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Image</label>
-                            <input type="file" id="productImage" name="imagen" accept="image/*"
-                                   class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Optional: Upload product image</p>
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Image <span class="text-walee-500">🔒 Premium</span></label>
+                            <button type="button" onclick="openSubscribeModal()" class="w-full p-2 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group">
+                                <div class="flex items-center justify-center gap-2">
+                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Upload image (Premium Feature)</span>
+                                    <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                    </svg>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="mt-3">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Información: <span class="text-walee-500">🔒 Premium</span></label>
+                            <div class="space-y-2">
+                                <button type="button" onclick="openSubscribeModal()" class="w-full p-2 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group text-left">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Service consomateur</span>
+                                        <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                        </svg>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="openSubscribeModal()" class="w-full p-2 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group text-left">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Recetter ou outre</span>
+                                        <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                        </svg>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="openSubscribeModal()" class="w-full p-2 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group text-left">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Tracabilidad</span>
+                                        <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                        </svg>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="openSubscribeModal()" class="w-full p-2 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group text-left">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Inform et valorise le produit</span>
+                                        <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                        </svg>
+                                    </div>
+                                </button>
+                            </div>
                         </div>
                     </form>
                 `,

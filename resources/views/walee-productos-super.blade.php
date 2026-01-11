@@ -1351,6 +1351,11 @@
                 formDataObj.append('foto_qr', fotoQrFile);
             }
             
+            const fotoQrSuperFile = document.getElementById('productoFotoQrSuper').files[0];
+            if (fotoQrSuperFile) {
+                formDataObj.append('foto_qr_super', fotoQrSuperFile);
+            }
+            
             if (productoId) {
                 formDataObj.append('_method', 'PUT');
             }

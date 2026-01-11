@@ -410,14 +410,29 @@ Route::get('/storage/productos-super/qr/{filename}', function ($filename) {
 Route::get('/storage/productos-super/qr-super/{filename}', function ($filename) {
     try {
         // Limpiar el nombre del archivo para seguridad
+        $originalFilename = $filename;
         $filename = basename($filename);
         $filename = preg_replace('/[^a-zA-Z0-9._-]/', '', $filename);
         
         if (empty($filename)) {
+            \Log::error('Nombre de archivo QR Super inválido después de limpieza', [
+                'original' => $originalFilename,
+                'cleaned' => $filename
+            ]);
             abort(404, 'Nombre de archivo inválido');
         }
         
         $path = storage_path('app/public/productos-super/qr-super/' . $filename);
+        
+        \Log::info('Buscando archivo QR Super de producto super', [
+            'original_filename' => $originalFilename,
+            'cleaned_filename' => $filename,
+            'path' => $path,
+            'path_exists' => file_exists($path),
+            'is_file' => is_file($path),
+            'is_readable' => is_readable($path),
+            'directory_exists' => is_dir(dirname($path))
+        ]);
         
         if (!file_exists($path) || !is_file($path)) {
             abort(404, 'Archivo QR Super no encontrado: ' . $filename);

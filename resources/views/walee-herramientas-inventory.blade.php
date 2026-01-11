@@ -244,7 +244,7 @@
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">DLV</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Exit Date</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">QR Code</th>
-                                <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Clientes</th>
+                                <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">QR Code Clientes</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Barcode</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Actions</th>
                             </tr>
@@ -466,7 +466,7 @@
                                             @endphp
                                             <img 
                                                 src="{{ $qrSuperUrl }}" 
-                                                alt="QR Clientes" 
+                                                alt="QR Code Clientes" 
                                                 class="w-12 h-12 object-cover rounded border border-pink-300 dark:border-pink-600 mx-auto cursor-pointer"
                                                 onclick="showQRModal('{{ $qrSuperUrl }}')"
                                                 onerror="this.style.display='none';"

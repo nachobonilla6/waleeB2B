@@ -566,7 +566,7 @@
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
                                             </svg>
-                                            Clientes
+                                            QR Code Clientes
                                         </label>
                                         <div class="flex gap-1.5">
                                             <input 
@@ -580,12 +580,12 @@
                                                 type="button"
                                                 onclick="generateQRCodeSuperProductosSuper()"
                                                 class="px-2 py-1.5 text-xs bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white rounded-lg font-medium transition-all flex items-center gap-1 shadow-sm hover:shadow"
-                                                title="Generar QR Clientes automáticamente"
+                                                title="Generar QR Code Clientes automáticamente"
                                             >
                                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                                                 </svg>
-                                                <span class="hidden sm:inline">Clientes</span>
+                                                <span class="hidden sm:inline">QR Code Clientes</span>
                                             </button>
                                         </div>
                                         <div id="fotoQrSuperPreview" class="mt-1 hidden">
@@ -806,10 +806,10 @@
                                                         <div class="flex-shrink-0">
                                                             <img 
                                                                 src="{{ $qrSuperUrl }}" 
-                                                                alt="QR Clientes {{ $producto->nombre }}" 
+                                                                alt="QR Code Clientes {{ $producto->nombre }}" 
                                                                 class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border border-pink-300 dark:border-pink-600 shadow-sm"
                                                                 loading="lazy"
-                                                                title="QR Clientes"
+                                                                title="QR Code Clientes"
                                                             >
                                                         </div>
                                                     @endif
@@ -1634,8 +1634,8 @@
                 Swal.close();
                 Swal.fire({
                     icon: 'success',
-                    title: '¡QR Clientes Generado!',
-                    text: 'El código QR Clientes ha sido generado exitosamente',
+                    title: '¡QR Code Clientes Generado!',
+                    text: 'El código QR Code Clientes ha sido generado exitosamente',
                     timer: 2000,
                     showConfirmButton: false
                 });

@@ -59,13 +59,13 @@
         </a>
         
         <!-- DLV (Sin enlace por ahora) -->
-        <button class="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 cursor-not-allowed opacity-60">
-            <div class="w-12 h-12 rounded-xl bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
-                <svg class="w-6 h-6 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button onclick="return false;" class="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-violet-50 dark:bg-slate-900/50 border border-black dark:border-black hover:border-black dark:hover:border-black hover:bg-emerald-400/5 dark:hover:bg-emerald-400/5 transition-all duration-300 cursor-pointer">
+            <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                 </svg>
             </div>
-            <span class="text-sm font-medium text-slate-500 dark:text-slate-400">DLV</span>
+            <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">DLV</span>
         </button>
         
         <!-- WhatsApp (Bloqueado) -->

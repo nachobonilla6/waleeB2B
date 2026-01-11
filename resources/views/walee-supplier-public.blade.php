@@ -325,22 +325,37 @@
                                 <p class="text-sm font-semibold text-slate-900 dark:text-white">{{ $supplier->contacto_empresa ?? 'N/A' }}</p>
                             </div>
                             <div class="sm:col-span-2">
-                                <label class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Información:</label>
-                                <div class="flex flex-wrap gap-2">
-                                    @if($supplier->informacion)
-                                        @php
-                                            $informacionArray = explode(',', $supplier->informacion);
-                                        @endphp
-                                        @foreach($informacionArray as $info)
-                                            @if(trim($info))
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-walee-100 dark:bg-walee-500/20 text-walee-700 dark:text-walee-300">
-                                                    {{ trim($info) }}
-                                                </span>
-                                            @endif
-                                        @endforeach
-                                    @else
-                                        <span class="text-sm text-slate-500 dark:text-slate-400">N/A</span>
-                                    @endif
+                                <label class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Información:</label>
+                                <div class="space-y-2">
+                                    @php
+                                        $informacionData = [];
+                                        if ($supplier->informacion) {
+                                            try {
+                                                $informacionData = json_decode($supplier->informacion, true);
+                                                if (!is_array($informacionData)) {
+                                                    $informacionData = [];
+                                                }
+                                            } catch (\Exception $e) {
+                                                $informacionData = [];
+                                            }
+                                        }
+                                    @endphp
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Service consomateur</label>
+                                        <p class="text-sm font-semibold text-slate-900 dark:text-white">{{ $informacionData['service_consomateur'] ?? 'N/A' }}</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Recetter ou outre</label>
+                                        <p class="text-sm font-semibold text-slate-900 dark:text-white">{{ $informacionData['recetter_ou_outre'] ?? 'N/A' }}</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Tracabilidad</label>
+                                        <p class="text-sm font-semibold text-slate-900 dark:text-white">{{ $informacionData['tracabilidad'] ?? 'N/A' }}</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Inform et valorise le produit</label>
+                                        <p class="text-sm font-semibold text-slate-900 dark:text-white">{{ $informacionData['inform_et_valorise'] ?? 'N/A' }}</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1284,13 +1299,29 @@
                 foto_url: @json($fotoUrl ?? '')
             };
             
-            // Parsear información si existe (puede ser un string separado por comas o un array)
-            let informacionArray = [];
+            // Parsear información si existe (puede ser un objeto JSON o string)
+            let informacionData = {
+                service_consomateur: '',
+                recetter_ou_outre: '',
+                tracabilidad: '',
+                inform_et_valorise: ''
+            };
+            
             if (supplier.informacion) {
-                if (typeof supplier.informacion === 'string') {
-                    informacionArray = supplier.informacion.split(',').map(item => item.trim());
-                } else if (Array.isArray(supplier.informacion)) {
-                    informacionArray = supplier.informacion;
+                try {
+                    if (typeof supplier.informacion === 'string') {
+                        const parsed = JSON.parse(supplier.informacion);
+                        informacionData = { ...informacionData, ...parsed };
+                    } else if (typeof supplier.informacion === 'object') {
+                        informacionData = { ...informacionData, ...supplier.informacion };
+                    }
+                } catch (e) {
+                    // Si no es JSON válido, intentar parsear como string separado por comas (formato antiguo)
+                    const parts = supplier.informacion.split(',');
+                    if (parts.length >= 1) informacionData.service_consomateur = parts[0].trim();
+                    if (parts.length >= 2) informacionData.recetter_ou_outre = parts[1].trim();
+                    if (parts.length >= 3) informacionData.tracabilidad = parts[2].trim();
+                    if (parts.length >= 4) informacionData.inform_et_valorise = parts[3].trim();
                 }
             }
             
@@ -1330,30 +1361,34 @@
                         <div class="mt-3">
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Información:</label>
                             <div class="space-y-2">
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="checkbox" id="infoServiceConsomateur" value="Service consomateur" 
-                                           ${informacionArray.includes('Service consomateur') ? 'checked' : ''}
-                                           class="rounded border-slate-300 dark:border-slate-600 text-walee-500 focus:ring-walee-500">
-                                    <span class="text-xs text-slate-700 dark:text-slate-300">Service consomateur</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="checkbox" id="infoRecetterOuOutre" value="Recetter ou outre"
-                                           ${informacionArray.includes('Recetter ou outre') ? 'checked' : ''}
-                                           class="rounded border-slate-300 dark:border-slate-600 text-walee-500 focus:ring-walee-500">
-                                    <span class="text-xs text-slate-700 dark:text-slate-300">Recetter ou outre</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="checkbox" id="infoTracabilidad" value="Tracabilidad"
-                                           ${informacionArray.includes('Tracabilidad') ? 'checked' : ''}
-                                           class="rounded border-slate-300 dark:border-slate-600 text-walee-500 focus:ring-walee-500">
-                                    <span class="text-xs text-slate-700 dark:text-slate-300">Tracabilidad</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="checkbox" id="infoInformEtValorise" value="Inform et valorise le produit"
-                                           ${informacionArray.includes('Inform et valorise le produit') ? 'checked' : ''}
-                                           class="rounded border-slate-300 dark:border-slate-600 text-walee-500 focus:ring-walee-500">
-                                    <span class="text-xs text-slate-700 dark:text-slate-300">Inform et valorise le produit</span>
-                                </label>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Service consomateur</label>
+                                    <input type="text" id="infoServiceConsomateur" 
+                                           value="${informacionData.service_consomateur || ''}"
+                                           class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500"
+                                           placeholder="Service consomateur">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Recetter ou outre</label>
+                                    <input type="text" id="infoRecetterOuOutre"
+                                           value="${informacionData.recetter_ou_outre || ''}"
+                                           class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500"
+                                           placeholder="Recetter ou outre">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Tracabilidad</label>
+                                    <input type="text" id="infoTracabilidad"
+                                           value="${informacionData.tracabilidad || ''}"
+                                           class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500"
+                                           placeholder="Tracabilidad">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Inform et valorise le produit</label>
+                                    <input type="text" id="infoInformEtValorise"
+                                           value="${informacionData.inform_et_valorise || ''}"
+                                           class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500"
+                                           placeholder="Inform et valorise le produit">
+                                </div>
                             </div>
                         </div>
                         <div class="mt-3">
@@ -1396,20 +1431,13 @@
                     }
                     const foto = document.getElementById('profileFoto').files[0];
                     
-                    // Recopilar información seleccionada
-                    const informacionSeleccionada = [];
-                    if (document.getElementById('infoServiceConsomateur').checked) {
-                        informacionSeleccionada.push('Service consomateur');
-                    }
-                    if (document.getElementById('infoRecetterOuOutre').checked) {
-                        informacionSeleccionada.push('Recetter ou outre');
-                    }
-                    if (document.getElementById('infoTracabilidad').checked) {
-                        informacionSeleccionada.push('Tracabilidad');
-                    }
-                    if (document.getElementById('infoInformEtValorise').checked) {
-                        informacionSeleccionada.push('Inform et valorise le produit');
-                    }
+                    // Recopilar información de los campos de texto
+                    const informacionData = {
+                        service_consomateur: document.getElementById('infoServiceConsomateur').value.trim(),
+                        recetter_ou_outre: document.getElementById('infoRecetterOuOutre').value.trim(),
+                        tracabilidad: document.getElementById('infoTracabilidad').value.trim(),
+                        inform_et_valorise: document.getElementById('infoInformEtValorise').value.trim()
+                    };
                     
                     return {
                         name: name,
@@ -1418,7 +1446,7 @@
                         telefono_2: document.getElementById('profileTelefono2').value,
                         address: document.getElementById('profileAddress').value,
                         contacto_empresa: document.getElementById('profileContactoEmpresa').value,
-                        informacion: informacionSeleccionada.join(', '),
+                        informacion: JSON.stringify(informacionData),
                         foto: foto
                     };
                 }

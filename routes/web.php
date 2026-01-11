@@ -5229,6 +5229,35 @@ Route::put('/walee-herramientas/inventory/producto/{id}', function (\Illuminate\
             }
         }
         
+        // Manejar eliminación de foto QR Super
+        if ($request->input('remove_foto_qr_super') === '1') {
+            if ($producto->foto_qr_super) {
+                $qrSuperPath = storage_path('app/public/' . $producto->foto_qr_super);
+                if (file_exists($qrSuperPath)) {
+                    unlink($qrSuperPath);
+                }
+                $producto->foto_qr_super = null;
+            }
+        }
+        
+        // Subir nueva foto QR Super si existe
+        if ($request->hasFile('foto_qr_super')) {
+            if ($producto->foto_qr_super && file_exists(storage_path('app/public/' . $producto->foto_qr_super))) {
+                unlink(storage_path('app/public/' . $producto->foto_qr_super));
+            }
+            $fotoQrSuper = $request->file('foto_qr_super');
+            $productosDir = storage_path('app/public/productos-super/qr-super');
+            if (!file_exists($productosDir)) {
+                mkdir($productosDir, 0755, true);
+            }
+            $path = $fotoQrSuper->store('productos-super/qr-super', 'public');
+            $producto->foto_qr_super = $path;
+            $fullPath = storage_path('app/public/' . $path);
+            if (file_exists($fullPath)) {
+                chmod($fullPath, 0644);
+            }
+        }
+        
         $producto->save();
         
         // Generar QR automáticamente si no hay foto_qr y no se eliminó

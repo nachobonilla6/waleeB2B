@@ -447,6 +447,60 @@
                                     >
                                 </div>
                             </div>
+                            
+                            <!-- Second QR Code for Super -->
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">QR Code Super (para pegar en productos)</label>
+                                <input 
+                                    type="file" 
+                                    id="productoFotoQrSuper" 
+                                    name="foto_qr_super" 
+                                    accept="image/*"
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 dark:file:bg-emerald-900/30 dark:file:text-emerald-300"
+                                >
+                                <div class="flex gap-2 mt-2">
+                                    <button 
+                                        type="button"
+                                        onclick="generateQRCodeSuper()"
+                                        class="px-2.5 py-1.5 text-xs bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-lg font-medium transition-all flex items-center gap-1 shadow-sm hover:shadow"
+                                        title="Generar QR Super automáticamente"
+                                    >
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                        </svg>
+                                        <span>Generar QR Super</span>
+                                    </button>
+                                </div>
+                                @if($producto->foto_qr_super)
+                                    @php
+                                        $qrSuperPath = trim($producto->foto_qr_super);
+                                        if (str_starts_with($qrSuperPath, 'http://') || str_starts_with($qrSuperPath, 'https://')) {
+                                            $qrSuperUrl = $qrSuperPath;
+                                        } else {
+                                            $filename = basename($qrSuperPath);
+                                            if (strpos($qrSuperPath, 'productos-super/qr-super/') !== false || strpos($qrSuperPath, 'qr-super/') !== false) {
+                                                $qrSuperUrl = route('storage.productos-super.qr', ['filename' => $filename]);
+                                            } else {
+                                                $qrSuperUrl = route('storage.productos-super.qr', ['filename' => $filename]);
+                                            }
+                                        }
+                                    @endphp
+                                    <div class="mt-2 relative inline-block">
+                                        <img src="{{ $qrSuperUrl }}" alt="Current QR Super" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentQrSuperPreview" onerror="console.error('Error loading QR Super image:', this.src); this.style.display='none';">
+                                        <button 
+                                            type="button"
+                                            onclick="removeFotoQrSuper()"
+                                            class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
+                                            title="Remove QR Super image"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <input type="hidden" id="removeFotoQrSuper" name="remove_foto_qr_super" value="0">
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -775,11 +829,193 @@
             });
         }
         
+        function removeFotoQrSuper() {
+            Swal.fire({
+                ...getSwalTheme(),
+                title: 'Remove QR Super Image?',
+                text: 'Are you sure you want to remove this QR Super code image? You can upload a new one after removing it.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Yes, remove it',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const removeFotoQrSuperInput = document.getElementById('removeFotoQrSuper');
+                    if (removeFotoQrSuperInput) {
+                        removeFotoQrSuperInput.value = '1';
+                    }
+                    const preview = document.getElementById('currentQrSuperPreview');
+                    if (preview) {
+                        preview.style.opacity = '0.5';
+                        preview.style.filter = 'grayscale(100%)';
+                        preview.style.border = '2px dashed #ef4444';
+                    }
+                    const qrSuperInput = document.getElementById('productoFotoQrSuper');
+                    if (qrSuperInput) {
+                        qrSuperInput.style.borderColor = '#3b82f6';
+                        qrSuperInput.style.borderWidth = '2px';
+                    }
+                    Swal.fire({
+                        ...getSwalTheme(),
+                        icon: 'success',
+                        title: 'QR Super image marked for removal',
+                        html: 'The QR Super image will be removed when you save the changes.<br><br>You can now upload a new QR Super image using the file input above.',
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
+        
+        async function generateQRCodeSuper() {
+            try {
+                Swal.fire({
+                    ...getSwalTheme(),
+                    title: 'Generando QR Code Super...',
+                    text: 'Por favor espere',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                const codigoBarras = document.getElementById('productoCodigoBarras');
+                const nombre = document.getElementById('productoNombre');
+                const productoId = {{ $producto->id }};
+                
+                if (!codigoBarras || !nombre) {
+                    throw new Error('Campos requeridos no encontrados');
+                }
+                
+                let qrText = '';
+                const codigoBarrasValue = codigoBarras.value ? codigoBarras.value.trim() : '';
+                const nombreValue = nombre.value ? nombre.value.trim() : 'Product';
+                
+                if (codigoBarrasValue !== '') {
+                    qrText = codigoBarrasValue;
+                } else {
+                    qrText = `PROD-${productoId}-${nombreValue}`;
+                }
+                
+                if (!qrText || qrText.trim() === '') {
+                    throw new Error('El texto del QR no puede estar vacío');
+                }
+                
+                const response = await fetch('/walee-herramientas/inventory/producto/generate-qr', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        text: qrText,
+                        producto_id: productoId
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to generate QR code');
+                }
+                
+                const base64Data = data.qr_code.split(',')[1];
+                const byteCharacters = atob(base64Data);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], { type: 'image/png' });
+                
+                const file = new File([blob], `qr-super-${productoId}-${Date.now()}.png`, { type: 'image/png' });
+                const dataTransfer = new DataTransfer();
+                
+                if (!dataTransfer.items || typeof dataTransfer.items.add !== 'function') {
+                    throw new Error('File API not fully supported in this browser. Please use a modern browser.');
+                }
+                
+                dataTransfer.items.add(file);
+                const fileInput = document.getElementById('productoFotoQrSuper');
+                
+                if (!fileInput) {
+                    throw new Error('File input not found');
+                }
+                
+                fileInput.files = dataTransfer.files;
+                
+                const preview = document.getElementById('currentQrSuperPreview');
+                
+                if (preview) {
+                    preview.src = data.qr_code;
+                    preview.style.opacity = '1';
+                    preview.style.filter = 'none';
+                } else {
+                    const previewContainer = fileInput.parentElement;
+                    const existingPreview = previewContainer.querySelector('.mt-2.relative');
+                    if (existingPreview) {
+                        existingPreview.remove();
+                    }
+                    const newPreview = document.createElement('div');
+                    newPreview.className = 'mt-2 relative inline-block';
+                    newPreview.innerHTML = `
+                        <img src="${data.qr_code}" alt="Generated QR Super" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentQrSuperPreview">
+                        <button 
+                            type="button"
+                            onclick="removeFotoQrSuper()"
+                            class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
+                            title="Remove QR Super image"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    `;
+                    fileInput.parentElement.appendChild(newPreview);
+                }
+                
+                const removeFotoQrSuperInput = document.getElementById('removeFotoQrSuper');
+                if (removeFotoQrSuperInput) {
+                    removeFotoQrSuperInput.value = '0';
+                }
+                
+                Swal.close();
+                Swal.fire({
+                    ...getSwalTheme(),
+                    icon: 'success',
+                    title: '¡QR Code Super Generado!',
+                    text: 'El código QR Super ha sido generado exitosamente',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                
+            } catch (error) {
+                console.error('Error generating QR Super code:', error);
+                Swal.close();
+                Swal.fire({
+                    ...getSwalTheme(),
+                    icon: 'error',
+                    title: 'Error Generando QR Code Super',
+                    html: `
+                        <p class="mb-3">${error.message || 'No se pudo generar el código QR Super. Por favor intente de nuevo.'}</p>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Puede subir una imagen de código QR Super manualmente usando el campo de archivo arriba.</p>
+                    `,
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#ef4444'
+                });
+            }
+        }
+        
         function cancelWithDeleteOption() {
             const hasImagen = document.getElementById('currentImagenPreview') !== null;
             const hasFotoQr = document.getElementById('currentQrPreview') !== null;
+            const hasFotoQrSuper = document.getElementById('currentQrSuperPreview') !== null;
             
-            if (!hasImagen && !hasFotoQr) {
+            if (!hasImagen && !hasFotoQr && !hasFotoQrSuper) {
                 // No hay fotos, simplemente cancelar
                 window.location.href = '{{ route("walee.herramientas.inventory") }}';
                 return;
@@ -789,6 +1025,7 @@
             const options = [];
             if (hasImagen) options.push('Product Image');
             if (hasFotoQr) options.push('QR Image');
+            if (hasFotoQrSuper) options.push('QR Super Image');
             
             Swal.fire({
                 ...getSwalTheme(),
@@ -816,6 +1053,12 @@
                         const removeFotoQrInput = document.getElementById('removeFotoQr');
                         if (removeFotoQrInput) {
                             removeFotoQrInput.value = '1';
+                        }
+                    }
+                    if (hasFotoQrSuper) {
+                        const removeFotoQrSuperInput = document.getElementById('removeFotoQrSuper');
+                        if (removeFotoQrSuperInput) {
+                            removeFotoQrSuperInput.value = '1';
                         }
                     }
                     
@@ -1016,6 +1259,11 @@
                     formData.append('foto_qr', fotoQrFile);
                 }
                 
+                const fotoQrSuperFile = document.getElementById('productoFotoQrSuper').files[0];
+                if (fotoQrSuperFile) {
+                    formData.append('foto_qr_super', fotoQrSuperFile);
+                }
+                
                 // Agregar flags para remover fotos
                 const removeImagenInput = document.getElementById('removeImagen');
                 if (removeImagenInput) {
@@ -1025,6 +1273,11 @@
                 const removeFotoQrInput = document.getElementById('removeFotoQr');
                 if (removeFotoQrInput) {
                     formData.append('remove_foto_qr', removeFotoQrInput.value);
+                }
+                
+                const removeFotoQrSuperInput = document.getElementById('removeFotoQrSuper');
+                if (removeFotoQrSuperInput) {
+                    formData.append('remove_foto_qr_super', removeFotoQrSuperInput.value);
                 }
                 
                 try {
@@ -1139,6 +1392,47 @@
                         const div = document.createElement('div');
                         div.className = 'mt-2 relative inline-block';
                         div.innerHTML = `<img src="${e.target.result}" alt="Preview QR" id="currentQrPreview" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600">`;
+                        container.appendChild(div);
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        document.getElementById('productoFotoQrSuper').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Si se sube una nueva imagen QR Super, resetear el flag de eliminación
+                const removeFotoQrSuperInput = document.getElementById('removeFotoQrSuper');
+                if (removeFotoQrSuperInput) {
+                    removeFotoQrSuperInput.value = '0';
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('currentQrSuperPreview');
+                    if (preview) {
+                        preview.src = e.target.result;
+                        preview.style.opacity = '1';
+                        preview.style.filter = 'none';
+                        preview.style.border = '1px solid rgb(203 213 225)';
+                    } else {
+                        const container = document.getElementById('productoFotoQrSuper').parentElement;
+                        const div = document.createElement('div');
+                        div.className = 'mt-2 relative inline-block';
+                        div.innerHTML = `
+                            <img src="${e.target.result}" alt="Preview QR Super" id="currentQrSuperPreview" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600">
+                            <button 
+                                type="button"
+                                onclick="removeFotoQrSuper()"
+                                class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
+                                title="Remove QR Super image"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        `;
                         container.appendChild(div);
                     }
                 };

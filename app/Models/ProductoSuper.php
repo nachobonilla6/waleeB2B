@@ -23,6 +23,7 @@ class ProductoSuper extends Model
         'codigo_barras',
         'imagen',
         'foto_qr',
+        'foto_qr_super',
         'activo',
         'cliente_id',
     ];

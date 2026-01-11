@@ -477,10 +477,12 @@
                                             if (str_starts_with($qrSuperPath, 'http://') || str_starts_with($qrSuperPath, 'https://')) {
                                                 $qrSuperUrl = $qrSuperPath;
                                             } else {
-                                                $filename = basename($qrSuperPath);
+                                                // Si el path contiene 'productos-super/qr-super/', usar asset directamente
                                                 if (strpos($qrSuperPath, 'productos-super/qr-super/') !== false || strpos($qrSuperPath, 'qr-super/') !== false) {
-                                                    $qrSuperUrl = route('storage.productos-super.qr-super', ['filename' => $filename]);
+                                                    $qrSuperUrl = asset('storage/' . $qrSuperPath);
                                                 } else {
+                                                    // Si solo tiene el nombre del archivo, extraerlo y usar la ruta
+                                                    $filename = basename($qrSuperPath);
                                                     $qrSuperUrl = route('storage.productos-super.qr-super', ['filename' => $filename]);
                                                 }
                                             }

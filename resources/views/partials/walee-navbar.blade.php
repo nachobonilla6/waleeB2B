@@ -31,7 +31,7 @@
         </a>
         
         <a 
-            href="{{ route('walee.herramientas.inventory') }}" 
+            href="/walee-herramientas/inventory" 
             class="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors group"
             title="Inventory"
         >
@@ -42,7 +42,7 @@
         </a>
         
         <a 
-            href="{{ route('walee.herramientas.stuck-dlc-dlv') }}" 
+            href="/walee-herramientas/stuck-dlc-dlv" 
             class="flex items-center gap-2 px-3 py-2 rounded-lg bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors group"
             title="Stock Management"
         >
@@ -123,7 +123,7 @@
             </a>
             
             <a 
-                href="{{ route('walee.herramientas.inventory') }}" 
+                href="/walee-herramientas/inventory" 
                 onclick="closeMobileMenu()"
                 class="flex items-center gap-3 px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-b border-slate-200 dark:border-slate-700 last:border-b-0"
             >
@@ -134,7 +134,7 @@
             </a>
             
             <a 
-                href="{{ route('walee.herramientas.stuck-dlc-dlv') }}" 
+                href="/walee-herramientas/stuck-dlc-dlv" 
                 onclick="closeMobileMenu()"
                 class="flex items-center gap-3 px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-b border-slate-200 dark:border-slate-700 last:border-b-0"
             >

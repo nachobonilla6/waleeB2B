@@ -477,8 +477,9 @@
                                             if (str_starts_with($qrSuperPath, 'http://') || str_starts_with($qrSuperPath, 'https://')) {
                                                 $qrSuperUrl = $qrSuperPath;
                                             } else {
-                                                // Siempre usar asset() para paths relativos (el path guardado siempre es productos-super/qr-super/filename.png)
-                                                $qrSuperUrl = asset('storage/' . $qrSuperPath);
+                                                // Extraer solo el nombre del archivo y usar la ruta específica de storage
+                                                $filename = basename($qrSuperPath);
+                                                $qrSuperUrl = route('storage.productos-super.qr-super', ['filename' => $filename]);
                                             }
                                         @endphp
                                     <div class="mt-2 relative inline-block">

@@ -5591,6 +5591,23 @@ Route::post('/walee-productos-super', function (\Illuminate\Http\Request $reques
             }
         }
         
+        // Subir foto QR Super si existe
+        if ($request->hasFile('foto_qr_super')) {
+            $fotoQrSuper = $request->file('foto_qr_super');
+            $productosDir = storage_path('app/public/productos-super/qr-super');
+            if (!file_exists($productosDir)) {
+                mkdir($productosDir, 0755, true);
+            }
+            $path = $fotoQrSuper->store('productos-super/qr-super', 'public');
+            $producto->foto_qr_super = $path;
+            
+            // Asegurar permisos públicos
+            $fullPath = storage_path('app/public/' . $path);
+            if (file_exists($fullPath)) {
+                chmod($fullPath, 0644);
+            }
+        }
+        
         $producto->save();
         
         // Generar QR automáticamente si no hay foto_qr
@@ -5705,6 +5722,28 @@ Route::put('/walee-productos-super/{id}', function (\Illuminate\Http\Request $re
             }
             $path = $fotoQr->store('productos-super/qr', 'public');
             $producto->foto_qr = $path;
+            
+            // Asegurar permisos públicos
+            $fullPath = storage_path('app/public/' . $path);
+            if (file_exists($fullPath)) {
+                chmod($fullPath, 0644);
+            }
+        }
+        
+        // Subir nueva foto QR Super si existe
+        if ($request->hasFile('foto_qr_super')) {
+            // Eliminar foto QR Super anterior si existe
+            if ($producto->foto_qr_super && file_exists(storage_path('app/public/' . $producto->foto_qr_super))) {
+                unlink(storage_path('app/public/' . $producto->foto_qr_super));
+            }
+            
+            $fotoQrSuper = $request->file('foto_qr_super');
+            $productosDir = storage_path('app/public/productos-super/qr-super');
+            if (!file_exists($productosDir)) {
+                mkdir($productosDir, 0755, true);
+            }
+            $path = $fotoQrSuper->store('productos-super/qr-super', 'public');
+            $producto->foto_qr_super = $path;
             
             // Asegurar permisos públicos
             $fullPath = storage_path('app/public/' . $path);

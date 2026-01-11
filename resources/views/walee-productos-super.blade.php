@@ -561,6 +561,40 @@
                                 </div>
                                 
                                 <div>
+                                    <div>
+                                        <label class="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
+                                            </svg>
+                                            QR Super
+                                        </label>
+                                        <div class="flex gap-1.5">
+                                            <input 
+                                                type="file" 
+                                                id="productoFotoQrSuper" 
+                                                name="foto_qr_super" 
+                                                accept="image/*"
+                                                class="flex-1 px-2 py-1.5 text-xs border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 dark:file:bg-emerald-900/30 dark:file:text-emerald-300"
+                                            >
+                                            <button 
+                                                type="button"
+                                                onclick="generateQRCodeSuperProductosSuper()"
+                                                class="px-2 py-1.5 text-xs bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-lg font-medium transition-all flex items-center gap-1 shadow-sm hover:shadow"
+                                                title="Generar QR Super automáticamente"
+                                            >
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                                </svg>
+                                                <span class="hidden sm:inline">QR Super</span>
+                                            </button>
+                                        </div>
+                                        <div id="fotoQrSuperPreview" class="mt-1 hidden">
+                                            <img id="fotoQrSuperPreviewImg" src="" alt="Preview QR Super" class="w-16 h-16 object-cover rounded border border-slate-300 dark:border-slate-600">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
                                     <label class="flex items-center gap-2 cursor-pointer">
                                         <input 
                                             type="checkbox" 
@@ -759,6 +793,23 @@
                                                                 class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border border-slate-300 dark:border-slate-600 shadow-sm"
                                                                 loading="lazy"
                                                                 title="QR Code"
+                                                            >
+                                                        </div>
+                                                    @endif
+                                                    
+                                                    @if($producto->foto_qr_super && !empty(trim($producto->foto_qr_super)))
+                                                        @php
+                                                            $qrSuperPath = trim($producto->foto_qr_super);
+                                                            $qrSuperFilename = basename($qrSuperPath);
+                                                            $qrSuperUrl = route('storage.productos-super.qr-super', ['filename' => $qrSuperFilename]);
+                                                        @endphp
+                                                        <div class="flex-shrink-0">
+                                                            <img 
+                                                                src="{{ $qrSuperUrl }}" 
+                                                                alt="QR Super {{ $producto->nombre }}" 
+                                                                class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border border-emerald-300 dark:border-emerald-600 shadow-sm"
+                                                                loading="lazy"
+                                                                title="QR Super Code"
                                                             >
                                                         </div>
                                                     @endif
@@ -1037,6 +1088,20 @@
                 reader.readAsDataURL(file);
             } else {
                 document.getElementById('fotoQrPreview').classList.add('hidden');
+            }
+        });
+        
+        document.getElementById('productoFotoQrSuper').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('fotoQrSuperPreviewImg').src = e.target.result;
+                    document.getElementById('fotoQrSuperPreview').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                document.getElementById('fotoQrSuperPreview').classList.add('hidden');
             }
         });
         
@@ -1472,6 +1537,100 @@
                     icon: 'success',
                     title: '¡QR Code Generado!',
                     text: 'El código QR ha sido generado exitosamente',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            } catch (error) {
+                console.error('Error generating QR code:', error);
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || 'No se pudo generar el código QR'
+                });
+            }
+        }
+        
+        async function generateQRCodeSuperProductosSuper() {
+            try {
+                Swal.fire({
+                    title: 'Generando QR Code Super...',
+                    text: 'Por favor espere',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                const codigoBarras = document.getElementById('productoCodigoBarras');
+                const nombre = document.getElementById('productoNombre');
+                const productoId = document.getElementById('productoId')?.value;
+                
+                let qrText = '';
+                const codigoBarrasValue = codigoBarras?.value ? codigoBarras.value.trim() : '';
+                const nombreValue = nombre?.value ? nombre.value.trim() : 'Product';
+                
+                if (codigoBarrasValue !== '') {
+                    qrText = codigoBarrasValue;
+                } else {
+                    qrText = productoId ? `PROD-${productoId}-${nombreValue}` : `PROD-${nombreValue}-${Date.now()}`;
+                }
+                
+                if (!qrText || qrText.trim() === '') {
+                    throw new Error('El texto del QR no puede estar vacío');
+                }
+                
+                const response = await fetch('/walee-herramientas/inventory/producto/generate-qr', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        text: qrText,
+                        producto_id: productoId || null
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'No se pudo generar el código QR Super');
+                }
+                
+                // Convertir base64 a blob y asignar al input
+                const base64Data = data.qr_code.split(',')[1];
+                const byteCharacters = atob(base64Data);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], { type: 'image/png' });
+                const file = new File([blob], `qr-super-${Date.now()}.png`, { type: 'image/png' });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                
+                const fileInput = document.getElementById('productoFotoQrSuper');
+                if (fileInput) {
+                    fileInput.files = dataTransfer.files;
+                    
+                    // Mostrar preview
+                    const preview = document.getElementById('fotoQrSuperPreview');
+                    const previewImg = document.getElementById('fotoQrSuperPreviewImg');
+                    if (preview && previewImg) {
+                        previewImg.src = data.qr_code;
+                        preview.classList.remove('hidden');
+                    }
+                }
+                
+                Swal.close();
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡QR Code Super Generado!',
+                    text: 'El código QR Super ha sido generado exitosamente',
                     timer: 2000,
                     showConfirmButton: false
                 });

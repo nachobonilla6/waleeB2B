@@ -786,7 +786,7 @@
                                                             $qrFilename = basename($qrPath);
                                                             $qrUrl = route('storage.productos-super.qr', ['filename' => $qrFilename]);
                                                         @endphp
-                                                        <div class="flex-shrink-0">
+                                                        <div class="flex-shrink-0 flex flex-col items-center">
                                                             <img 
                                                                 src="{{ $qrUrl }}" 
                                                                 alt="QR {{ $producto->nombre }}" 
@@ -794,6 +794,7 @@
                                                                 loading="lazy"
                                                                 title="QR Code"
                                                             >
+                                                            <span class="text-xs text-slate-600 dark:text-slate-400 mt-1 font-medium">QR Code</span>
                                                         </div>
                                                     @endif
                                                     
@@ -803,7 +804,7 @@
                                                             $qrSuperFilename = basename($qrSuperPath);
                                                             $qrSuperUrl = route('storage.productos-super.qr-super', ['filename' => $qrSuperFilename]);
                                                         @endphp
-                                                        <div class="flex-shrink-0">
+                                                        <div class="flex-shrink-0 flex flex-col items-center">
                                                             <img 
                                                                 src="{{ $qrSuperUrl }}" 
                                                                 alt="QR Code Conso {{ $producto->nombre }}" 
@@ -811,6 +812,7 @@
                                                                 loading="lazy"
                                                                 title="QR Code Conso"
                                                             >
+                                                            <span class="text-xs text-pink-600 dark:text-pink-400 mt-1 font-medium">QR Code Conso</span>
                                                         </div>
                                                     @endif
                                                 </div>

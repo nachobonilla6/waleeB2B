@@ -244,6 +244,7 @@
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">DLV</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Exit Date</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">QR Code</th>
+                                <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Clientes</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Barcode</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Actions</th>
                             </tr>
@@ -444,6 +445,30 @@
                                                 alt="QR Code" 
                                                 class="w-12 h-12 object-cover rounded border border-slate-300 dark:border-slate-600 mx-auto cursor-pointer"
                                                 onclick="showQRModal('{{ $qrUrl }}')"
+                                                onerror="this.style.display='none';"
+                                            >
+                                        @else
+                                            <span class="text-xs text-slate-400">-</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3 text-center">
+                                        @if($producto->foto_qr_super)
+                                            @php
+                                                $qrSuperPath = trim($producto->foto_qr_super);
+                                                if (str_starts_with($qrSuperPath, 'http://') || str_starts_with($qrSuperPath, 'https://')) {
+                                                    $qrSuperUrl = $qrSuperPath;
+                                                } else {
+                                                    // Extraer solo el nombre del archivo
+                                                    $filename = basename($qrSuperPath);
+                                                    // Usar la ruta definida para QR Super
+                                                    $qrSuperUrl = route('storage.productos-super.qr-super', ['filename' => $filename]);
+                                                }
+                                            @endphp
+                                            <img 
+                                                src="{{ $qrSuperUrl }}" 
+                                                alt="QR Clientes" 
+                                                class="w-12 h-12 object-cover rounded border border-pink-300 dark:border-pink-600 mx-auto cursor-pointer"
+                                                onclick="showQRModal('{{ $qrSuperUrl }}')"
                                                 onerror="this.style.display='none';"
                                             >
                                         @else

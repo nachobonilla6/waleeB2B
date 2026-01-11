@@ -174,6 +174,8 @@
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Price</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">DLC</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">DLV</th>
+                                <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">QR Code</th>
+                                <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Clientes</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Stock</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Status</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Actions</th>
@@ -267,6 +269,50 @@
                                         <span class="text-xs text-slate-700 dark:text-slate-300">
                                             {{ $producto->fecha_limite_venta ? \Carbon\Carbon::parse($producto->fecha_limite_venta)->format('d/m/Y') : '-' }}
                                         </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-center">
+                                        @if($producto->foto_qr)
+                                            @php
+                                                $qrPath = trim($producto->foto_qr);
+                                                if (str_starts_with($qrPath, 'http://') || str_starts_with($qrPath, 'https://')) {
+                                                    $qrUrl = $qrPath;
+                                                } else {
+                                                    $filename = basename($qrPath);
+                                                    $qrUrl = route('storage.productos-super.qr', ['filename' => $filename]);
+                                                }
+                                            @endphp
+                                            <img 
+                                                src="{{ $qrUrl }}" 
+                                                alt="QR Code" 
+                                                class="w-12 h-12 object-cover rounded border border-slate-300 dark:border-slate-600 mx-auto cursor-pointer"
+                                                onclick="showQRModal('{{ $qrUrl }}')"
+                                                onerror="this.style.display='none';"
+                                            >
+                                        @else
+                                            <span class="text-xs text-slate-400">-</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3 text-center">
+                                        @if($producto->foto_qr_super)
+                                            @php
+                                                $qrSuperPath = trim($producto->foto_qr_super);
+                                                if (str_starts_with($qrSuperPath, 'http://') || str_starts_with($qrSuperPath, 'https://')) {
+                                                    $qrSuperUrl = $qrSuperPath;
+                                                } else {
+                                                    $filename = basename($qrSuperPath);
+                                                    $qrSuperUrl = route('storage.productos-super.qr-super', ['filename' => $filename]);
+                                                }
+                                            @endphp
+                                            <img 
+                                                src="{{ $qrSuperUrl }}" 
+                                                alt="QR Clientes" 
+                                                class="w-12 h-12 object-cover rounded border border-pink-300 dark:border-pink-600 mx-auto cursor-pointer"
+                                                onclick="showQRModal('{{ $qrSuperUrl }}')"
+                                                onerror="this.style.display='none';"
+                                            >
+                                        @else
+                                            <span class="text-xs text-slate-400">-</span>
+                                        @endif
                                     </td>
                                     <td class="px-4 py-3">
                                         <div class="flex items-center justify-center gap-2">
